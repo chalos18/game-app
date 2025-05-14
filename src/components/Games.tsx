@@ -170,38 +170,6 @@ const Games = () => {
             });
     };
 
-    // const editGame = (e: React.FormEvent, gameId: number) => {
-    //     e.preventDefault();
-    //
-    //     if (!newTitle || !newDescription || !newGenreId || !newPrice || !newPlatformIds) {
-    //         showSnackbar("Please fill out all fields", "warning");
-    //         return;
-    //     }
-    //
-    //     const platformIdsArray = newPlatformIds.split(",").map((id) => parseInt(id.trim()));
-    //
-    //     axios
-    //         .patch(`http://localhost:4941/api/v1/games/${gameId}`, {
-    //             title: newTitle,
-    //             description: newDescription,
-    //             genreId: newGenreId,
-    //             price: newPrice,
-    //             platformIds: platformIdsArray,
-    //         })
-    //         .then(() => {
-    //             getGames();
-    //             showSnackbar("Game updated successfully", "success");
-    //             setNewTitle("");
-    //             setNewDescription("");
-    //             setNewGenreId(null);
-    //             setNewPrice(null);
-    //             setNewPlatformIds("");
-    //         })
-    //         .catch((error) => {
-    //             showSnackbar("Error updating game: " + error.toString(), "error");
-    //         });
-    // };
-
     const game_rows = () =>
         games.map((row: Game) => (
             <TableRow hover tabIndex={-1} key={row.gameId}>
