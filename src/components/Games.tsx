@@ -22,6 +22,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import CSS from "csstype";
 
 const card: CSS.Properties = {
@@ -227,7 +228,7 @@ const Games = () => {
                     <Button
                         variant="outlined"
                         // onClick={() => handleDeleteDialogOpen(row)}
-                        startIcon={<DeleteIcon />}
+                        startIcon={<EditIcon />}
                     >
                         Edit
                     </Button>

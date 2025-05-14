@@ -11,13 +11,17 @@ interface IGameProps {
     game: Game
 }
 
+
 const GameListObject = (props: IGameProps) => {
+    const [game] = React.useState<Game>(props.game)
     const [games, setGames] = React.useState<Game[]>([]);
+
     const [errorFlag, setErrorFlag] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("");
 
-    const [game] = React.useState<Game>(props.game)
     // const [title, setTitle] = React.useState("")
+
+    const [imageUrl, setImageUrl] = React.useState<string | null>(null);
 
     const [dialogGame, setDialogGame] = React.useState<Game | null>(null);
 
@@ -30,6 +34,21 @@ const GameListObject = (props: IGameProps) => {
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
     // const editGameFromStore = useGameStore(state => state.editGame)
 
+    React.useEffect(() => {
+        axios
+            .get(`http://localhost:4941/api/v1/games/${game.gameId}/image`, {
+                responseType: 'blob' // Important: treat it as binary data
+            })
+            .then((response) => {
+                const url = URL.createObjectURL(response.data);
+                setImageUrl(url);
+            })
+            .catch((error) => {
+                console.error("Error fetching image", error);
+                // fallback image if needed
+                setImageUrl("https://via.placeholder.com/200x200?text=No+Image");
+            });
+    }, [game.gameId]);
 
     const handleDeleteDialogOpen = (game: Game) => {
         setDialogGame(game);
@@ -64,6 +83,23 @@ const GameListObject = (props: IGameProps) => {
             });
     };
 
+    // const getGameCoverImage = (gameId: number) => {
+    //     axios
+    //         .get(`http://localhost:4941/api/v1/games/${gameId}/image`)
+    //         .then((response) => {
+    //             console.log(response.data);
+    //             setGameImage(response.data.image);
+    //         })
+    //         .catch((error) => {
+    //             showSnackbar("Error getting cover image: " + error.toString(), "error");
+    //         })
+    //         .catch((error) => {
+    //             setErrorFlag(true);
+    //             setErrorMessage(error.toString());
+    //         });
+    // }
+
+
     const deleteGame = (gameId: number) => {
         axios
             .delete(`http://localhost:4941/api/v1/games/${gameId}`)
@@ -93,7 +129,7 @@ const GameListObject = (props: IGameProps) => {
                 height="200"
                 width="200"
                 sx={{objectFit:"cover"}}
-                image="https://png.pngitem.com/pimgs/s/150-1503945_transparent-game-png-default-game-image-png-png.png"
+                image={imageUrl || "https://via.placeholder.com/200x200?text=Loading..."}
                 alt="Auction hero"
             />
         <CardContent>
