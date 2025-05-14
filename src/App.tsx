@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Games from "./components/Games";
 import Game from "./components/Game";
 import NotFound from "./components/NotFound";
+import GameList from "./components/GameList";
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <div>
           <Routes>
             <Route path="/games" element={<Games/>}/>
+            <Route path="/games-props" element={<GameList/>}/>
             <Route path="/games/:id" element={<Game/>}/>
             <Route path="/*" element={<NotFound/>}/>
           </Routes>
