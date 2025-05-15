@@ -1,7 +1,8 @@
 import axios from "axios";
 import React from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import GameListObject from "./GameListObject";
 
 const Game = () => {
     const { id } = useParams();
@@ -66,19 +67,7 @@ const Game = () => {
             <h1>Game</h1>
             {errorFlag && <div style={{ color: "red" }}>{errorMessage}</div>}
 
-            <p>
-                <strong>Title:</strong> {game.title} <br />
-                <strong>Rating:</strong> {game.rating} <br />
-                <strong>Price:</strong> ${game.price}
-            </p>
-
-            <Link to="/games">Back to games</Link>
-            &nbsp;&nbsp;
-            <Button variant="contained" color="primary">Edit</Button>
-            &nbsp;&nbsp;
-            <Button variant="outlined" color="error" onClick={() => setOpenDeleteDialog(true)}>
-                Delete
-            </Button>
+            <GameListObject key={game.gameId + game.title + game.rating + game.price} game={game} />
 
             <Dialog
                 open={openDeleteDialog}

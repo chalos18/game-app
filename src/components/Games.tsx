@@ -24,6 +24,8 @@ import { Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import CSS from "csstype";
+import { useNavigate } from "react-router-dom";
+
 
 const card: CSS.Properties = {
     padding: "10px",
@@ -50,15 +52,15 @@ interface HeadCell {
 }
 
 const headCells: readonly HeadCell[] = [
-    { id: "gameId", label: "ID", numeric: true },
+    // { id: "gameId", label: "ID", numeric: true },
     { id: "title", label: "Title", numeric: false },
     { id: "genreId", label: "Genre ID", numeric: true },
     { id: "creationDate", label: "Creation Date", numeric: false },
-    { id: "creatorId", label: "Creator ID", numeric: true },
+    // { id: "creatorId", label: "Creator ID", numeric: true },
     { id: "price", label: "Price", numeric: true },
-    { id: "creatorFirstName", label: "Creator First", numeric: false },
-    { id: "creatorLastName", label: "Creator Last", numeric: false },
-    { id: "rating", label: "Rating", numeric: true },
+    { id: "creatorFirstName", label: "Creator First Name", numeric: false },
+    { id: "creatorLastName", label: "Creator Last Name", numeric: false },
+    // { id: "rating", label: "Rating", numeric: true },
     { id: "platformIds", label: "Platform Ids", numeric: true },
     { id: "actions", label: "", numeric: false },
 ];
@@ -81,6 +83,10 @@ const Games = () => {
     const [newPrice, setNewPrice] = React.useState<number | null>(null);
     const [newPlatformIds, setNewPlatformIds] = React.useState<string>("");
 
+    const [imageUrls, setImageUrls] = React.useState<Record<number, string>>({});
+
+    const navigate = useNavigate();
+
     React.useEffect(() => {
         getGames();
     }, []);
@@ -100,18 +106,35 @@ const Games = () => {
         axios
             .get("http://localhost:4941/api/v1/games")
             .then((response) => {
-                setGames(response.data.games);
+                const fetchedGames = response.data.games;
+                setGames(fetchedGames);
                 setErrorFlag(false);
                 setErrorMessage("");
+
+                fetchedGames.forEach((game: Game) => {
+                    axios
+                        .get(`http://localhost:4941/api/v1/games/${game.gameId}/image`, {
+                            responseType: "blob"
+                        })
+                        .then((imgResponse) => {
+                            const url = URL.createObjectURL(imgResponse.data);
+                            setImageUrls((prev) => ({ ...prev, [game.gameId]: url }));
+                        })
+                        .catch(() => {
+                            setImageUrls((prev) => ({
+                                ...prev,
+                                [game.gameId]: "https://via.placeholder.com/100x100?text=No+Image"
+                            }));
+                        });
+                });
             })
             .catch((error) => {
                 showSnackbar("Error getting games: " + error.toString(), "error");
-            })
-            .catch((error) => {
                 setErrorFlag(true);
                 setErrorMessage(error.toString());
             });
     };
+
 
     const handleDeleteDialogOpen = (game: Game) => {
         setDialogGame(game);
@@ -137,6 +160,7 @@ const Games = () => {
                 handleDeleteDialogClose();
             });
     };
+
 
     const addGame = (e: React.FormEvent) => {
         e.preventDefault();
@@ -170,21 +194,41 @@ const Games = () => {
             });
     };
 
+
     const game_rows = () =>
         games.map((row: Game) => (
             <TableRow hover tabIndex={-1} key={row.gameId}>
-                <TableCell align="right">{row.gameId}</TableCell>
+                <TableCell align="left">
+                    <img
+                        src={imageUrls[row.gameId]}
+                        alt={row.title}
+                        width={100}
+                        height={100}
+                        style={{ objectFit: "cover", borderRadius: 4 }}
+                    />
+                </TableCell>
+                {/*<TableCell align="right">{row.gameId}</TableCell>*/}
                 <TableCell>{row.title}</TableCell>
+                {/* TODO: update this to actually display the name of the genre instead of the id*/}
                 <TableCell align="right">{row.genreId}</TableCell>
-                <TableCell>{row.creationDate}</TableCell>
-                <TableCell align="right">{row.creatorId}</TableCell>
-                <TableCell align="right">{row.price}</TableCell>
+                <TableCell>
+                    {new Date(row.creationDate).toLocaleString("en-NZ", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                    })}
+                </TableCell>
+                {/*<TableCell align="right">{row.creatorId}</TableCell>*/}
+                <TableCell align="right">{"$" + row.price}</TableCell>
                 <TableCell>{row.creatorFirstName}</TableCell>
                 <TableCell>{row.creatorLastName}</TableCell>
-                <TableCell align="right">{row.rating}</TableCell>
+                {/*<TableCell align="right">{row.rating}</TableCell>*/}
+                {/* TODO: update this to actually display the name of the platforms instead of ids*/}
                 <TableCell align="right">{row.platformIds.join(", ")}</TableCell>
                 <TableCell align="right">
-                    <Link to={`/games/${row.gameId}`}>View game</Link>&nbsp;|&nbsp;
+                    <Button onClick={() => navigate(`/games/${row.gameId}`)}>
+                        View game
+                    </Button>
+                    &nbsp;|&nbsp;
                     <Button
                         variant="outlined"
                         color="error"
@@ -264,6 +308,13 @@ const Games = () => {
                     <Table>
                         <TableHead>
                             <TableRow>
+                                    <TableCell
+                                        key="imageFilename"
+                                        align={"left"}
+                                        padding="normal"
+                                    >
+                                        {"Game Image"}
+                                    </TableCell>
                                 {headCells.map((headCell) => (
                                     <TableCell
                                         key={headCell.id}

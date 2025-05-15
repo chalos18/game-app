@@ -1,22 +1,22 @@
 import React from "react";
 import axios from "axios";
-import {Delete, Edit} from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 import {useGameStore} from "../store";
+// import dayjs from "dayjs";
 import {
-    Alert, Button, Card, CardActions, CardContent, CardMedia, Dialog,
+    Alert, Box, Button, Card, CardActions, CardContent, CardMedia, Dialog,
     DialogActions, DialogContent, DialogContentText,
-    DialogTitle, IconButton, Snackbar, TextField, Typography
+    DialogTitle, IconButton, Snackbar, Typography
 } from "@mui/material";
 import CSS from 'csstype';
+import {useNavigate} from "react-router-dom";
 
 interface IGameProps {
     game: Game
 }
 
-
 const GameListObject = (props: IGameProps) => {
     const [game] = React.useState<Game>(props.game)
-
     const [imageUrl, setImageUrl] = React.useState<string | null>(null);
 
     const [dialogGame, setDialogGame] = React.useState<Game | null>(null);
@@ -28,6 +28,8 @@ const GameListObject = (props: IGameProps) => {
     const deleteGameFromStore = useGameStore(state => state.removeGame)
 
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
+
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         axios
@@ -82,31 +84,71 @@ const GameListObject = (props: IGameProps) => {
 
     const gameCardStyles: CSS.Properties = {
         display: "inline-block",
-        height: "328px",
+        height: "400px",
         width: "300px",
         margin: "10px",
         padding: "0px"
     }
     return (
-        <Card sx={gameCardStyles}>
-            <CardMedia
-                component="img"
-                height="200"
-                width="200"
-                sx={{objectFit:"cover"}}
-                image={imageUrl || "https://via.placeholder.com/200x200?text=Loading..."}
-                alt="Auction hero"
-            />
-        <CardContent>
-            <Typography variant="h4">
-                {game.gameId} {game.title}
-            </Typography>
-        </CardContent>
-        <CardActions>
-            <IconButton onClick={() => handleDeleteDialogOpen(game)}>
-                <Delete/>
-            </IconButton>
-        </CardActions>
+        <Card sx={{
+            ...gameCardStyles,
+            cursor: 'pointer',
+            '&:hover': { boxShadow: 6, transform: 'scale(1.02)' },
+            transition: 'all 0.2s ease-in-out'
+        }}>
+            <Box onClick={() => navigate(`/games/${game.gameId}`)}>
+                <CardMedia
+                    component="img"
+                    height="200"
+                    width="200"
+                    sx={{ objectFit: "cover" }}
+                    image={imageUrl || "https://via.placeholder.com/200x200?text=Loading..."}
+                    alt="Game hero"
+                />
+                <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                        {game.title}
+                    </Typography>
+
+                    <Typography variant="body2" color="textSecondary">
+                        {/* Created: {dayjs(game.creationDate).format("D MMM YYYY, h:mm A")} */}
+                    </Typography>
+
+                    <Typography variant="body2" color="textSecondary">
+                        Genre: {game.genreId}
+                    </Typography>
+
+                    <Typography variant="body2" color="textSecondary">
+                        Price: ${game.price?.toFixed(2)}
+                    </Typography>
+
+                    {/*<Typography variant="body2" color="textSecondary">*/}
+                    {/*    Platforms: {game.platformIds?.join(", ")}*/}
+                    {/*</Typography>*/}
+
+                    <Box display="flex" alignItems="center" mt={1}>
+                        <img
+                            src={imageUrl || "https://via.placeholder.com/40x40?text=User"}
+                            alt="Creator"
+                            width={40}
+                            height={40}
+                            style={{ borderRadius: "50%", marginRight: 8 }}
+                        />
+                        <Typography variant="body2">
+                            {game.creatorFirstName} {game.creatorLastName}
+                        </Typography>
+                    </Box>
+                </CardContent>
+            </Box>
+
+            <CardActions>
+                <IconButton onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteDialogOpen(game);
+                }}>
+                    <Delete />
+                </IconButton>
+            </CardActions>
 
         <Snackbar autoHideDuration={5000}
                   open={snackOpen}

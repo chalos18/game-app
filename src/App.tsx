@@ -1,22 +1,23 @@
 import React from 'react';
 import './App.css';
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import Games from "./components/Games";
-import Game from "./components/Game";
-import NotFound from "./components/NotFound";
-import GameList from "./components/GameList";
+
+import Home from "./pages/Home";
+import LoginPage from "./pages/LoginPage";
+import GamePage from "./pages/GamePage";
+import Navbar from "./components/NavBar";
 
 
 function App() {
   return (
     <div className="App">
       <Router>
+        <Navbar/>
         <div>
           <Routes>
-            <Route path="/games" element={<Games/>}/>
-            <Route path="/games-props" element={<GameList/>}/>
-            <Route path="/games/:id" element={<Game/>}/>
-            <Route path="/*" element={<NotFound/>}/>
+            <Route path="/home" element={<Home/>}/>
+            <Route path="/login" element={<LoginPage/>}/>
+            <Route path="/games/:id" element={<GamePage/>}/>
           </Routes>
         </div>
       </Router>
