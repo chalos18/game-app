@@ -8,5 +8,8 @@ type Game = {
     creatorId: number,
     price:number,
     rating: number,
-    // platformids
+    description: string,
+    platformIds: number[];
+    numberOfWishlists: number;
+    numberOfOwners: number;
 }

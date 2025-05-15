@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import CSS from 'csstype';
 import {useNavigate} from "react-router-dom";
+import fallbackAvatar from "../assets/fallback-avatar.png";
 
 interface IGameProps {
     game: Game
@@ -17,19 +18,33 @@ interface IGameProps {
 
 const GameListObject = (props: IGameProps) => {
     const [game] = React.useState<Game>(props.game)
-    const [imageUrl, setImageUrl] = React.useState<string | null>(null);
 
-    const [dialogGame, setDialogGame] = React.useState<Game | null>(null);
+    const [imageUrl, setImageUrl] = React.useState<string | null>(null);
+    const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
+
+    const navigate = useNavigate();
+
+    const [errorFlag, setErrorFlag] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("");
+
+    // const [dialogGame, setDialogGame] = React.useState<Game | null>(null);
+
+    const [genres, setGenres] = React.useState<{ genreId: number, name: string }[]>([]);
+    const [platforms, setPlatforms] = React.useState<{ platformId: number, name: string }[]>([]);
 
     const [snackOpen, setSnackOpen] = React.useState(false);
     const [snackMessage, setSnackMessage] = React.useState("");
     const [snackSeverity, setSnackSeverity] = React.useState<"success" | "error" | "warning">("success");
 
-    const deleteGameFromStore = useGameStore(state => state.removeGame)
+    const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
+        setSnackMessage(message);
+        setSnackSeverity(severity);
+        setSnackOpen(true);
+    };
+    // const deleteGameFromStore = useGameStore(state => state.removeGame)
+    //
+    // const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
 
-    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
-
-    const navigate = useNavigate();
 
     React.useEffect(() => {
         axios
@@ -46,45 +61,105 @@ const GameListObject = (props: IGameProps) => {
             });
     }, [game.gameId]);
 
-    const handleDeleteDialogOpen = (game: Game) => {
-        setDialogGame(game);
-        setOpenDeleteDialog(true);
-    };
-
-    const handleDeleteDialogClose = () => {
-        setDialogGame(null);
-        setOpenDeleteDialog(false);
-    };
-
-    const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
-        setSnackMessage(message);
-        setSnackSeverity(severity);
-        setSnackOpen(true);
-    };
-
-    const handleSnackClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === "clickaway") return;
-        setSnackOpen(false);
-    };
-
-    const deleteGame = (gameId: number) => {
+    React.useEffect(() => {
         axios
-            .delete(`http://localhost:4941/api/v1/games/${gameId}`)
-            .then(() => {
-                deleteGameFromStore(game)
-                showSnackbar("Game deleted successfully", "success");
+            .get(`http://localhost:4941/api/v1/users/${game.creatorId}/image`, {
+                responseType: 'blob'
+            })
+            .then((response) => {
+                const url = URL.createObjectURL(response.data);
+                setUserImageUrl(url);
             })
             .catch((error) => {
-                showSnackbar("Error deleting game: " + error.toString(), "error");
+                if (error.response?.status === 404) {
+                    setUserImageUrl(null);
+                } else {
+                    setUserImageUrl("https://via.placeholder.com/200x200?text=No+Image");
+                }
+            });
+    }, [game.gameId]);
+
+
+    // const handleDeleteDialogOpen = (game: Game) => {
+    //     setDialogGame(game);
+    //     setOpenDeleteDialog(true);
+    // };
+    //
+    // const handleDeleteDialogClose = () => {
+    //     setDialogGame(null);
+    //     setOpenDeleteDialog(false);
+    // };
+    //
+    //
+    // const handleSnackClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
+    //     if (reason === "clickaway") return;
+    //     setSnackOpen(false);
+    // };
+
+    // const deleteGame = (gameId: number) => {
+    //     axios
+    //         .delete(`http://localhost:4941/api/v1/games/${gameId}`)
+    //         .then(() => {
+    //             deleteGameFromStore(game)
+    //             showSnackbar("Game deleted successfully", "success");
+    //         })
+    //         .catch((error) => {
+    //             showSnackbar("Error deleting game: " + error.toString(), "error");
+    //         })
+    //         .finally(() => {
+    //             handleDeleteDialogClose();
+    //         });
+    // };
+    //
+
+    const getGameGenres = () => {
+        axios
+            .get(`http://localhost:4941/api/v1/games/genres`)
+            .then((response) => {
+                setGenres(response.data);
             })
-            .finally(() => {
-                handleDeleteDialogClose();
+            .catch((error) => {
+                showSnackbar("Error getting game genres: " + error.toString(), "error");
+                setErrorFlag(true);
+                setErrorMessage(error.toString());
             });
     };
 
+    const getGamePlatforms = () => {
+        axios
+            .get(`http://localhost:4941/api/v1/games/platforms`)
+            .then((response) => {
+                setPlatforms(response.data);
+            })
+            .catch((error) => {
+                showSnackbar("Error getting game platforms: " + error.toString(), "error");
+                setErrorFlag(true);
+                setErrorMessage(error.toString());
+            });
+    };
+
+    React.useEffect(() => {
+        getGameGenres();
+        getGamePlatforms();
+    }, []);
+
+    const getGenreNameById = (id: number) => {
+        const genre = genres.find((g) => g.genreId === id);
+        return genre ? genre.name : "Unknown";
+    };
+
+    const getPlatformNamesByIds = (ids: number[]): string => {
+        const names = ids
+            .map(id => platforms.find(p => p.platformId === id)?.name)
+            .filter((name): name is string => !!name);
+        return names.length > 0 ? names.join(", ") : "Unknown";
+    };
+
+
+
     const gameCardStyles: CSS.Properties = {
         display: "inline-block",
-        height: "400px",
+        // height: "500px",
         width: "300px",
         margin: "10px",
         padding: "0px"
@@ -99,7 +174,7 @@ const GameListObject = (props: IGameProps) => {
             <Box onClick={() => navigate(`/games/${game.gameId}`)}>
                 <CardMedia
                     component="img"
-                    height="200"
+                    // height="300"
                     width="200"
                     sx={{ objectFit: "cover" }}
                     image={imageUrl || "https://via.placeholder.com/200x200?text=Loading..."}
@@ -111,27 +186,30 @@ const GameListObject = (props: IGameProps) => {
                     </Typography>
 
                     <Typography variant="body2" color="textSecondary">
-                        {/* Created: {dayjs(game.creationDate).format("D MMM YYYY, h:mm A")} */}
+                        {game.price === 0.00 ? "FREE" : "$" + game.price?.toFixed(2)}
                     </Typography>
 
                     <Typography variant="body2" color="textSecondary">
-                        Genre: {game.genreId}
+                        {getGenreNameById(game.genreId)}
                     </Typography>
 
                     <Typography variant="body2" color="textSecondary">
-                        Price: ${game.price?.toFixed(2)}
+                        {getPlatformNamesByIds(game.platformIds)}
                     </Typography>
 
-                    {/*<Typography variant="body2" color="textSecondary">*/}
-                    {/*    Platforms: {game.platformIds?.join(", ")}*/}
-                    {/*</Typography>*/}
+                    <Typography variant="body2" color="textSecondary">
+                        Created {new Date(game.creationDate).toLocaleString("en-NZ", {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                        })}
+                    </Typography>
 
                     <Box display="flex" alignItems="center" mt={1}>
                         <img
-                            src={imageUrl || "https://via.placeholder.com/40x40?text=User"}
+                            src={userImageUrl || fallbackAvatar}
                             alt="Creator"
-                            width={40}
-                            height={40}
+                            width={50}
+                            height={50}
                             style={{ borderRadius: "50%", marginRight: 8 }}
                         />
                         <Typography variant="body2">
@@ -141,46 +219,17 @@ const GameListObject = (props: IGameProps) => {
                 </CardContent>
             </Box>
 
-            <CardActions>
-                <IconButton onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteDialogOpen(game);
-                }}>
-                    <Delete />
-                </IconButton>
-            </CardActions>
+        {/*<Snackbar autoHideDuration={5000}*/}
+        {/*          open={snackOpen}*/}
+        {/*          onClose={handleSnackClose}*/}
+        {/*          key={snackMessage}*/}
+        {/*          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}*/}
+        {/*>*/}
+        {/*    <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{ width: "100%" }}>*/}
+        {/*        {snackMessage}*/}
+        {/*    </Alert>*/}
+        {/*</Snackbar>*/}
 
-        <Snackbar autoHideDuration={5000}
-                  open={snackOpen}
-                  onClose={handleSnackClose}
-                  key={snackMessage}
-                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-            <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{ width: "100%" }}>
-                {snackMessage}
-            </Alert>
-        </Snackbar>
-
-        <Dialog open={openDeleteDialog} onClose={handleDeleteDialogClose}>
-            <DialogTitle>Delete Game?</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    Are you sure you want to delete the game{" "}
-                    <strong>{dialogGame?.title}</strong>?
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={handleDeleteDialogClose}>Cancel</Button>
-                <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => dialogGame && deleteGame(dialogGame.gameId)}
-                    autoFocus
-                >
-                    Delete
-                </Button>
-            </DialogActions>
-        </Dialog>
     </Card>
     )
 }

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from "react";
 import CSS from 'csstype';
-import { Paper, AlertTitle, Alert } from "@mui/material";
+import {Paper, AlertTitle, Alert, Typography, Grid, Container, TextField} from '@mui/material';
 import GameListObject from "./GameListObject";
 import { useGameStore } from "../store"
 import SearchBar from "./SearchBar";
@@ -11,13 +11,18 @@ const GameList = () => {
     const setGames = useGameStore(state => state.setGames);
 
     const [errorFlag, setErrorFlag] = React.useState(false);
-    const [errorMessage, setErrorMessage] = React.useState("");
+    const [errorMessage, setErrorMessage] = React.useState("")
+
+    const [searchTerm, setSearchTerm] = React.useState("");
 
 
     React.useEffect(() => {
         const getGames = () => {
-            axios.get("http://localhost:4941/api/v1/games")
+            const params = new URLSearchParams();
+            if (searchTerm) params.append("q", searchTerm);
+            axios.get(`http://localhost:4941/api/v1/games?${params.toString()}`)
                 .then((response) => {
+                    console.log(response.data.games);
                     setErrorFlag(false);
                     setErrorMessage("");
                     setGames(response.data.games);
@@ -29,33 +34,34 @@ const GameList = () => {
                 });
         };
         getGames();
-    }, [setGames]);
-
-    const game_rows = () =>
-        games.map((game: Game) => (
-            <GameListObject key={game.gameId + game.title} game={game} />
-        ));
-
-    const card: CSS.Properties = {
-        padding: "10px",
-        margin: "20px",
-        display: "block",
-        width: "fit-content",
-    };
+    }, [searchTerm, setGames]);
 
     return (
-        <Paper elevation={3} style={card}>
-            <h1>Game List</h1>
-            <div style={{ display: "inline-block", maxWidth: "965px", minWidth: "320px"}}>
-                {errorFlag ? (
-                    <Alert severity="error">
-                        <AlertTitle>Error</AlertTitle>
-                        {errorMessage}
-                    </Alert>
-                ) : null}
-                {game_rows()}
-            </div>
-        </Paper>
+        <Container maxWidth="lg" sx={{ mt: 4 }}>
+            <Paper elevation={3} sx={{ p: 3 }}>
+                <div className="p-4 space-y-4">
+                    <TextField
+                        label="Search games"
+                        fullWidth
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    {errorFlag && (
+                        <Alert severity="error">
+                            <AlertTitle>Error</AlertTitle>
+                            {errorMessage}
+                        </Alert>
+                    )}
+                    <Grid container spacing={3} justifyContent="center">
+                        {games.map((game: Game) => (
+                            <Grid key={game.gameId}>
+                                <GameListObject game={game} />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </div>
+            </Paper>
+        </Container>
     );
 };
 

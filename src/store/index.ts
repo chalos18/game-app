@@ -2,20 +2,30 @@ import { create } from 'zustand';
 
 interface GameState {
     games: Game[];
+    game: Game | null;
     setGames: (games: Array<Game>) => void;
-    // editGame: (game: Game, newTitle: string) => void;
+    setGame: (game: Game) => void;
     removeGame: (game: Game) => void;
+    // editGame: (game: Game, newTitle: string) => void;
 }
 
-const getLocalStorage = (key: string): Array<Game> => JSON.parse(window.localStorage.getItem(key) as string);
-const setLocalStorage = (key: string, value:Array<Game>) => window.localStorage.setItem(key, JSON.stringify(value));
+const getLocalStorage = (key: string): Game[] =>
+    JSON.parse(window.localStorage.getItem(key) as string) || [];
+
+const setLocalStorage = (key: string, value: Game[]) =>
+    window.localStorage.setItem(key, JSON.stringify(value));
 
 const useStore = create<GameState>((set) => ({
     games: getLocalStorage('games') || [],
+    game: null,
+
     setGames: (games: Array<Game>) => set(() => {
-    setLocalStorage('games', games)
-        return {games: games}
+        setLocalStorage('games', games)
+            return {games: games}
     }),
+    setGame: (game: Game) => set(() => ({
+        game
+    })),
     // editGame: (game: Game, newTitle) => set((state) => {
     //     const temp = state.games.map(u => g.gameId === game.gameId ?
     //         ({...g, title: newTitle} as Game): g)

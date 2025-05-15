@@ -1,9 +1,9 @@
+import {TextField} from "@mui/material";
+
 
 const SearchBar = () => {
     return (
-        <div>
-            <h1> I am a search bar</h1>
-        </div>
+        <TextField fullWidth label="fullWidth" id="fullWidth" />
     )
 }
 
