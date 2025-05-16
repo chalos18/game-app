@@ -1,7 +1,6 @@
 import React from 'react';
 import { Typography, Container } from '@mui/material';
 import GameList from '../components/GameList';
-import SearchBar from "../components/SearchBar";
 
 const Home = () => {
     return (

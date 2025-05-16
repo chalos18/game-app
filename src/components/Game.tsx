@@ -1,25 +1,13 @@
 import axios from "axios";
 import React from "react";
-import {
-    Box,
-    Button, Card, CardContent,
-    CardMedia,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle, Typography
-} from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
-import GameListObject from "./GameListObject";
+import {Box, Card, CardContent, CardMedia, Typography} from "@mui/material";
+import {useNavigate, useParams} from "react-router-dom";
 import CSS from "csstype";
-import {useGameStore} from "../store";
 import fallbackAvatar from "../assets/fallback-avatar.png"
 
 
-
 const Game = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const navigate = useNavigate();
 
     const [game, setGame] = React.useState<Game>({
@@ -145,7 +133,7 @@ const Game = () => {
                 setErrorMessage(error.toString());
             })
             .finally(() => {
-                    handleDeleteDialogClose();
+                handleDeleteDialogClose();
             });
     };
 
@@ -205,14 +193,14 @@ const Game = () => {
     const fetchReviewerImages = (reviews: Review[]) => {
         reviews.forEach((r) => {
             axios
-                .get(`http://localhost:4941/api/v1/users/${r.reviewerId}/image`, { responseType: "blob" })
+                .get(`http://localhost:4941/api/v1/users/${r.reviewerId}/image`, {responseType: "blob"})
                 .then((res) => {
                     const imageUrl = URL.createObjectURL(res.data);
-                    setReviewerImages((prev) => ({ ...prev, [r.reviewerId]: imageUrl }));
+                    setReviewerImages((prev) => ({...prev, [r.reviewerId]: imageUrl}));
                 })
                 .catch((err) => {
                     // On error, use fallback (e.g. 404 or no image)
-                    setReviewerImages((prev) => ({ ...prev, [r.reviewerId]: fallbackAvatar }));
+                    setReviewerImages((prev) => ({...prev, [r.reviewerId]: fallbackAvatar}));
                 });
         });
     };
@@ -234,9 +222,16 @@ const Game = () => {
 
     return (
         <div>
-            {errorFlag && <div style={{ color: "red" }}>{errorMessage}</div>}
-            <Card sx={{ ...gameCardStyles }}>
-                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+            {errorFlag && <div style={{color: "red"}}>{errorMessage}</div>}
+            {/*<Button*/}
+            {/*    variant="outlined"*/}
+            {/*    color="primary"*/}
+            {/*    onClick={() => navigate("/home")}*/}
+            {/*>*/}
+            {/*    Back to Games*/}
+            {/*</Button>*/}
+            <Card sx={{...gameCardStyles}}>
+                <Box sx={{display: 'flex', flexDirection: 'row'}}>
                     <CardMedia
                         component="img"
                         sx={{
@@ -301,7 +296,7 @@ const Game = () => {
                                 alt="Creator"
                                 width={50}
                                 height={50}
-                                style={{ borderRadius: "50%", marginRight: 8 }}
+                                style={{borderRadius: "50%", marginRight: 8}}
                             />
                             <Typography variant="body2">
                                 {game.creatorFirstName} {game.creatorLastName}
@@ -310,7 +305,7 @@ const Game = () => {
                         </Box>
                     </CardContent>
                 </Box>
-            {/*<Snackbar autoHideDuration={5000}*/}
+                {/*<Snackbar autoHideDuration={5000}*/}
                 {/*          open={snackOpen}*/}
                 {/*          onClose={handleSnackClose}*/}
                 {/*          key={snackMessage}*/}
@@ -321,8 +316,8 @@ const Game = () => {
                 {/*    </Alert>*/}
                 {/*</Snackbar>*/}
             </Card>
-            <Card sx={{ ...gameCardStyles }}>
-                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+            <Card sx={{...gameCardStyles}}>
+                <Box sx={{display: 'flex', flexDirection: 'row'}}>
                     <CardContent
                         sx={{
                             flex: 1,
@@ -338,13 +333,18 @@ const Game = () => {
                         )}
 
                         {reviews.map((review, idx) => (
-                            <Box key={idx} sx={{ borderBottom: "1px solid #ddd", padding: "10px 0", display: 'flex', alignItems: 'flex-start' }}>
+                            <Box key={idx} sx={{
+                                borderBottom: "1px solid #ddd",
+                                padding: "10px 0",
+                                display: 'flex',
+                                alignItems: 'flex-start'
+                            }}>
                                 <img
                                     src={reviewerImages[review.reviewerId] || fallbackAvatar}
                                     alt="Reviewer"
                                     width={60}
                                     height={60}
-                                    style={{ borderRadius: "50%", marginRight: 10 }}
+                                    style={{borderRadius: "50%", marginRight: 10}}
                                 />
                                 <Box>
                                     <Typography variant="subtitle2">
@@ -357,7 +357,7 @@ const Game = () => {
                                         })}
                                     </Typography>
                                     {review.review && (
-                                        <Typography variant="body2" sx={{ marginTop: 0.5 }}>
+                                        <Typography variant="body2" sx={{marginTop: 0.5}}>
                                             {review.review}
                                         </Typography>
                                     )}

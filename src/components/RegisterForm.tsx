@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import {Button, TextField, Stack, Alert, Snackbar, AlertTitle} from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import {Alert, Button, IconButton, InputAdornment, Snackbar, Stack, TextField} from '@mui/material';
 import axios from "axios";
+import {Visibility, VisibilityOff} from '@mui/icons-material';
 
 const RegisterForm = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
     const [userId, setUserId] = useState('');
 
     const [errorFlag, setErrorFlag] = React.useState(false);
@@ -18,7 +22,12 @@ const RegisterForm = () => {
 
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        setIsLoggedIn(!!token);
+    }, []);
 
     const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
         setSnackMessage(message);
@@ -29,6 +38,10 @@ const RegisterForm = () => {
     const handleSnackClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === "clickaway") return;
         setSnackOpen(false);
+    };
+
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword);
     };
 
     const parseValidationError = (message: string): { [key: string]: string } => {
@@ -50,8 +63,47 @@ const RegisterForm = () => {
     };
 
 
+    const handleLogin = () => {
+        if (!email || !password) {
+            showSnackbar("Please fill out all fields", "warning");
+            return;
+        }
+        axios.post(`http://localhost:4941/api/v1/users/login`, {
+            email: email,
+            password: password,
+        })
+            .then((response) => {
+                const {userId, token} = response.data;
+
+                localStorage.setItem("userId", userId);
+                localStorage.setItem("token", token);
+
+                showSnackbar("User logged in successfully", "success");
+
+                setTimeout(() => {
+                    window.location.href = "/home";
+                }, 500);
+            })
+            .catch((error) => {
+                const backendMessage = error.response.statusText || "Login failed";
+                const parsedErrors = parseValidationError(backendMessage);
+
+                if (Object.keys(parsedErrors).length > 0) {
+                    setFieldErrors(parsedErrors);
+                    // Object.values(parsedErrors).forEach((msg) => showSnackbar(msg, "error"));
+                } else {
+                    showSnackbar("Login failed. Please check your inputs.", "error");
+                    setFieldErrors({});
+                }
+
+                setErrorFlag(true);
+                setErrorMessage("Validation error.");
+            })
+    };
+
+
     const handleRegister = () => {
-        if (!firstName || !lastName || !email || !password ) {
+        if (!firstName || !lastName || !email || !password) {
             showSnackbar("Please fill out all fields", "warning");
             return;
         }
@@ -65,6 +117,7 @@ const RegisterForm = () => {
                 setErrorFlag(false);
                 setErrorMessage("");
                 setUserId(response.data);
+                handleLogin();
 
                 setFirstName('');
                 setLastName('');
@@ -107,38 +160,55 @@ const RegisterForm = () => {
             <TextField
                 label="First Name"
                 fullWidth
+                required={true}
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
             />
             <TextField
                 label="Last Name"
                 fullWidth
+                required={true}
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
             />
             <TextField
-                label="Email"
+                label="Email Address"
                 type="email"
                 fullWidth
+                required={true}
                 value={email}
                 onChange={(e) => {
                     setEmail(e.target.value);
-                    setFieldErrors(prev => ({ ...prev, email: '' }));  // Clear error on change
+                    setFieldErrors(prev => ({...prev, email: ''}));  // Clear error on change
                 }}
                 error={!!fieldErrors.email}
                 helperText={fieldErrors.email}
             />
             <TextField
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 fullWidth
                 value={password}
+                required={true}
                 onChange={(e) => {
                     setPassword(e.target.value);
-                    setFieldErrors(prev => ({ ...prev, password: '' }));
+                    setFieldErrors(prev => ({...prev, password: ''}));
                 }}
                 error={!!fieldErrors.password}
                 helperText={fieldErrors.password}
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowPassword}
+                                edge="end"
+                            >
+                                {showPassword ? <VisibilityOff/> : <Visibility/>}
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
             />
             <Button variant="contained" color="primary" fullWidth onClick={handleRegister}>
                 Register

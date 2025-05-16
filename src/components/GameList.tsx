@@ -1,10 +1,13 @@
 import axios from 'axios';
 import React from "react";
-import {Paper, AlertTitle, Alert, Grid, Container, TextField} from '@mui/material';
+import {Alert, AlertTitle, Container, Grid, Paper, TextField} from '@mui/material';
 import GameListObject from "./GameListObject";
-import { useGameStore } from "../store"
+import {useGameStore} from "../store"
+import {useNavigate} from "react-router-dom";
 
 const GameList = () => {
+    const navigate = useNavigate();
+
     const games = useGameStore(state => state.games);
     const setGames = useGameStore(state => state.setGames);
 
@@ -35,15 +38,15 @@ const GameList = () => {
     }, [searchTerm, setGames]);
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 4 }}>
-            <Paper elevation={3} sx={{ p: 3, backgroundColor: "#172D2D"}}>
+        <Container maxWidth="lg" sx={{mt: 4}}>
+            <Paper elevation={3} sx={{p: 3, backgroundColor: "#172D2D"}}>
                 <div className="p-4 space-y-4">
                     <TextField
                         label="Search games"
                         fullWidth
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        sx={{ backgroundColor: "white" }}
+                        sx={{backgroundColor: "white"}}
                     />
                     {errorFlag && (
                         <Alert severity="error">
@@ -54,7 +57,7 @@ const GameList = () => {
                     <Grid container spacing={3} justifyContent="center">
                         {games.map((game: Game) => (
                             <Grid key={game.gameId}>
-                                <GameListObject game={game} />
+                                <GameListObject game={game}/>
                             </Grid>
                         ))}
                     </Grid>
