@@ -1,10 +1,8 @@
 import axios from 'axios';
 import React from "react";
-import CSS from 'csstype';
-import {Paper, AlertTitle, Alert, Typography, Grid, Container, TextField} from '@mui/material';
+import {Paper, AlertTitle, Alert, Grid, Container, TextField} from '@mui/material';
 import GameListObject from "./GameListObject";
 import { useGameStore } from "../store"
-import SearchBar from "./SearchBar";
 
 const GameList = () => {
     const games = useGameStore(state => state.games);
@@ -29,7 +27,7 @@ const GameList = () => {
                 }, (error) => {
                     setErrorFlag(true);
                     setErrorMessage(
-                        error.toString() + " defaulting to old games, changes app may not work as expected"
+                        error.toString()
                     );
                 });
         };
@@ -38,13 +36,14 @@ const GameList = () => {
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4 }}>
-            <Paper elevation={3} sx={{ p: 3 }}>
+            <Paper elevation={3} sx={{ p: 3, backgroundColor: "#172D2D"}}>
                 <div className="p-4 space-y-4">
                     <TextField
                         label="Search games"
                         fullWidth
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        sx={{ backgroundColor: "white" }}
                     />
                     {errorFlag && (
                         <Alert severity="error">

@@ -1,15 +1,7 @@
-import React, { useState } from 'react';
-import {
-    Box,
-    Button,
-    Container,
-    TextField,
-    Typography,
-    Paper,
-} from '@mui/material';
-import NavBar from "../components/NavBar";
+import React, {useState} from 'react';
+import {Box, Button, Container, Paper, TextField, Typography,} from '@mui/material';
 
-const Login: React.FC = () => {
+const LoginForm: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -20,8 +12,8 @@ const Login: React.FC = () => {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ mt: 8 }}>
-            <Paper elevation={3} sx={{ padding: 4 }}>
+        <Container maxWidth="sm" sx={{mt: 8}}>
+            <Paper elevation={3} sx={{padding: 4}}>
                 <Typography variant="h4" align="center" gutterBottom>
                     Sign In
                 </Typography>
@@ -49,7 +41,7 @@ const Login: React.FC = () => {
                         fullWidth
                         variant="contained"
                         color="primary"
-                        sx={{ mt: 3 }}
+                        sx={{mt: 3}}
                     >
                         Log In
                     </Button>
@@ -59,4 +51,4 @@ const Login: React.FC = () => {
     );
 };
 
-export default Login;
+export default LoginForm;

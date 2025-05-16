@@ -1,13 +1,7 @@
 import React from "react";
 import axios from "axios";
-import {Delete} from "@mui/icons-material";
-import {useGameStore} from "../store";
 // import dayjs from "dayjs";
-import {
-    Alert, Box, Button, Card, CardActions, CardContent, CardMedia, Dialog,
-    DialogActions, DialogContent, DialogContentText,
-    DialogTitle, IconButton, Snackbar, Typography
-} from "@mui/material";
+import {Box, Card, CardContent, CardMedia, Typography} from "@mui/material";
 import CSS from 'csstype';
 import {useNavigate} from "react-router-dom";
 import fallbackAvatar from "../assets/fallback-avatar.png";
@@ -156,7 +150,6 @@ const GameListObject = (props: IGameProps) => {
     };
 
 
-
     const gameCardStyles: CSS.Properties = {
         display: "inline-block",
         // height: "500px",
@@ -168,15 +161,17 @@ const GameListObject = (props: IGameProps) => {
         <Card sx={{
             ...gameCardStyles,
             cursor: 'pointer',
-            '&:hover': { boxShadow: 6, transform: 'scale(1.02)' },
-            transition: 'all 0.2s ease-in-out'
+            '&:hover': {boxShadow: 6, transform: 'scale(1.02)'},
+            transition: 'all 0.2s ease-in-out',
+            // backgroundColor: "#406262",
+            // color: "white",
         }}>
             <Box onClick={() => navigate(`/games/${game.gameId}`)}>
                 <CardMedia
                     component="img"
                     // height="300"
                     width="200"
-                    sx={{ objectFit: "cover" }}
+                    sx={{objectFit: "cover", color: "black"}}
                     image={imageUrl || "https://via.placeholder.com/200x200?text=Loading..."}
                     alt="Game hero"
                 />
@@ -199,9 +194,9 @@ const GameListObject = (props: IGameProps) => {
 
                     <Typography variant="body2" color="textSecondary">
                         Created {new Date(game.creationDate).toLocaleString("en-NZ", {
-                            dateStyle: "medium",
-                            timeStyle: "short",
-                        })}
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                    })}
                     </Typography>
 
                     <Box display="flex" alignItems="center" mt={1}>
@@ -210,7 +205,7 @@ const GameListObject = (props: IGameProps) => {
                             alt="Creator"
                             width={50}
                             height={50}
-                            style={{ borderRadius: "50%", marginRight: 8 }}
+                            style={{borderRadius: "50%", marginRight: 8}}
                         />
                         <Typography variant="body2">
                             {game.creatorFirstName} {game.creatorLastName}
@@ -219,18 +214,18 @@ const GameListObject = (props: IGameProps) => {
                 </CardContent>
             </Box>
 
-        {/*<Snackbar autoHideDuration={5000}*/}
-        {/*          open={snackOpen}*/}
-        {/*          onClose={handleSnackClose}*/}
-        {/*          key={snackMessage}*/}
-        {/*          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}*/}
-        {/*>*/}
-        {/*    <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{ width: "100%" }}>*/}
-        {/*        {snackMessage}*/}
-        {/*    </Alert>*/}
-        {/*</Snackbar>*/}
+            {/*<Snackbar autoHideDuration={5000}*/}
+            {/*          open={snackOpen}*/}
+            {/*          onClose={handleSnackClose}*/}
+            {/*          key={snackMessage}*/}
+            {/*          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}*/}
+            {/*>*/}
+            {/*    <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{ width: "100%" }}>*/}
+            {/*        {snackMessage}*/}
+            {/*    </Alert>*/}
+            {/*</Snackbar>*/}
 
-    </Card>
+        </Card>
     )
 }
 export default GameListObject

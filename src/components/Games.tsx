@@ -20,11 +20,10 @@ import {
     TableRow,
     TextField,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import CSS from "csstype";
-import { useNavigate } from "react-router-dom";
 
 
 const card: CSS.Properties = {
@@ -53,16 +52,16 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
     // { id: "gameId", label: "ID", numeric: true },
-    { id: "title", label: "Title", numeric: false },
-    { id: "genreId", label: "Genre ID", numeric: true },
-    { id: "creationDate", label: "Creation Date", numeric: false },
+    {id: "title", label: "Title", numeric: false},
+    {id: "genreId", label: "Genre ID", numeric: true},
+    {id: "creationDate", label: "Creation Date", numeric: false},
     // { id: "creatorId", label: "Creator ID", numeric: true },
-    { id: "price", label: "Price", numeric: true },
-    { id: "creatorFirstName", label: "Creator First Name", numeric: false },
-    { id: "creatorLastName", label: "Creator Last Name", numeric: false },
+    {id: "price", label: "Price", numeric: true},
+    {id: "creatorFirstName", label: "Creator First Name", numeric: false},
+    {id: "creatorLastName", label: "Creator Last Name", numeric: false},
     // { id: "rating", label: "Rating", numeric: true },
-    { id: "platformIds", label: "Platform Ids", numeric: true },
-    { id: "actions", label: "", numeric: false },
+    {id: "platformIds", label: "Platform Ids", numeric: true},
+    {id: "actions", label: "", numeric: false},
 ];
 
 const Games = () => {
@@ -118,7 +117,7 @@ const Games = () => {
                         })
                         .then((imgResponse) => {
                             const url = URL.createObjectURL(imgResponse.data);
-                            setImageUrls((prev) => ({ ...prev, [game.gameId]: url }));
+                            setImageUrls((prev) => ({...prev, [game.gameId]: url}));
                         })
                         .catch(() => {
                             setImageUrls((prev) => ({
@@ -204,7 +203,7 @@ const Games = () => {
                         alt={row.title}
                         width={100}
                         height={100}
-                        style={{ objectFit: "cover", borderRadius: 4 }}
+                        style={{objectFit: "cover", borderRadius: 4}}
                     />
                 </TableCell>
                 {/*<TableCell align="right">{row.gameId}</TableCell>*/}
@@ -233,14 +232,14 @@ const Games = () => {
                         variant="outlined"
                         color="error"
                         onClick={() => handleDeleteDialogOpen(row)}
-                        startIcon={<DeleteIcon />}
+                        startIcon={<DeleteIcon/>}
                     >
                         Delete
                     </Button>
                     <Button
                         variant="outlined"
                         // onClick={() => handleDeleteDialogOpen(row)}
-                        startIcon={<EditIcon />}
+                        startIcon={<EditIcon/>}
                     >
                         Edit
                     </Button>
@@ -261,9 +260,9 @@ const Games = () => {
                       open={snackOpen}
                       onClose={handleSnackClose}
                       key={snackMessage}
-                      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                      anchorOrigin={{vertical: 'top', horizontal: 'right'}}
             >
-                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{ width: "100%" }}>
+                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{width: "100%"}}>
                     {snackMessage}
                 </Alert>
             </Snackbar>
@@ -272,7 +271,7 @@ const Games = () => {
                 <h1>Add a new game</h1>
                 <form onSubmit={addGame}>
                     <Stack spacing={2}>
-                        <TextField label="Title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+                        <TextField label="Title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)}/>
                         <TextField
                             label="Description"
                             value={newDescription}
@@ -308,13 +307,13 @@ const Games = () => {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                    <TableCell
-                                        key="imageFilename"
-                                        align={"left"}
-                                        padding="normal"
-                                    >
-                                        {"Game Image"}
-                                    </TableCell>
+                                <TableCell
+                                    key="imageFilename"
+                                    align={"left"}
+                                    padding="normal"
+                                >
+                                    {"Game Image"}
+                                </TableCell>
                                 {headCells.map((headCell) => (
                                     <TableCell
                                         key={headCell.id}
