@@ -1,4 +1,4 @@
-import { Container, Typography, Tabs, Tab, Box, Paper } from '@mui/material';
+import {Box, Container, Paper, Tab, Tabs, Typography} from '@mui/material';
 import React from 'react';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
@@ -11,6 +11,7 @@ const LoginPage = () => {
     };
 
     return (
+        // TODO: logout the user if the react project is shut down
         <Container maxWidth="sm" sx={{ mt: 6 }}>
             <Paper elevation={3} sx={{ p: 4 }}>
                 <Typography variant="h4" align="center" gutterBottom>

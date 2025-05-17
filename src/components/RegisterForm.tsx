@@ -199,14 +199,26 @@ const RegisterForm = () => {
                 fullWidth
                 required={true}
                 value={firstName}
+                slotProps={{
+                    htmlInput: {
+                        maxLength: 64
+                    }
+                }}
                 onChange={(e) => setFirstName(e.target.value)}
+                helperText={`${firstName.length}/64 characters`}
             />
             <TextField
                 label="Last Name"
                 fullWidth
                 required={true}
                 value={lastName}
+                slotProps={{
+                    htmlInput: {
+                        maxLength: 64
+                    }
+                }}
                 onChange={(e) => setLastName(e.target.value)}
+                helperText={`${lastName.length}/64 characters`}
             />
             <TextField
                 label="Email Address"
@@ -218,8 +230,14 @@ const RegisterForm = () => {
                     setEmail(e.target.value);
                     setFieldErrors(prev => ({...prev, email: ''}));  // Clear error on change
                 }}
+                slotProps={{
+                    htmlInput: {
+                        maxLength: 256
+                    }
+                }}
                 error={!!fieldErrors.email}
                 helperText={fieldErrors.email}
+                // helperText={`${lastName.length}/256 characters`}
             />
             <TextField
                 label="Password"
@@ -233,8 +251,8 @@ const RegisterForm = () => {
                 }}
                 error={!!fieldErrors.password}
                 helperText={fieldErrors.password}
-                InputProps={{
-                    endAdornment: (
+                slotProps={{
+                    input: (
                         <InputAdornment position="end">
                             <IconButton
                                 aria-label="toggle password visibility"
