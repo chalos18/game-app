@@ -21,6 +21,7 @@ const LoginPage = () => {
                     <Tab label="Register" />
                 </Tabs>
                 <Box sx={{ mt: 3 }}>
+                    {/* TODO: add field text limits for both of the below, e.g a password cant be n digits long*/}
                     {tabIndex === 0 ? <LoginForm /> : <RegisterForm />}
                 </Box>
             </Paper>

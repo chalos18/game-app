@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, {useState} from "react";
 import {Box, Card, CardContent, CardMedia, CircularProgress, Grid, Typography} from "@mui/material";
-import { HashLink } from 'react-router-hash-link';
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {HashLink} from 'react-router-hash-link';
+import {useNavigate, useParams} from "react-router-dom";
 import CSS from "csstype";
 import fallbackAvatar from "../assets/fallback-avatar.png"
 import {useGameStore} from "../store";
@@ -274,7 +274,7 @@ const Game = () => {
                 <Card sx={{...gameCardStyles}}>
                     <Box sx={{display: 'flex', flexDirection: 'row'}}>
                         {isLoading && (
-                            <CircularProgress color="secondary" />
+                            <CircularProgress color="secondary"/>
                         )}
                         {!isLoading && (
                             <CardMedia
@@ -293,7 +293,7 @@ const Game = () => {
                             }}
                         >
                             <Typography variant="h6" gutterBottom>
-                                {game.title}
+                                {game.title} - {game.rating} ★
                             </Typography>
 
                             <Typography variant="body2" color="textSecondary">
@@ -348,7 +348,7 @@ const Game = () => {
                                 </Typography>
                             </Box>
                             <Typography variant="body2">
-                                <HashLink smooth to="#all-reviews" style={{ textDecoration: 'none' }}>
+                                <HashLink smooth to="#all-reviews" style={{textDecoration: 'none'}}>
                                     All Reviews
                                 </HashLink>
                             </Typography>
@@ -363,11 +363,11 @@ const Game = () => {
                             }}
                         >
                             <Typography variant="h6">
-                                Similar games you might like:
+                                Similar games you might like
                             </Typography>
                             {games.length === 0 && (
                                 <Typography variant="body2" color="textSecondary">
-                                    No similar games found.
+                                    No similar games found
                                 </Typography>
                             )}
                             <Grid container spacing={3} justifyContent="center">

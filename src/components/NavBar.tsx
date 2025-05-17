@@ -1,12 +1,28 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
-import {AppBar, Box, Button, IconButton, Menu, MenuItem, Toolbar, Typography} from '@mui/material';
+import {Alert, AppBar, Box, Button, IconButton, Menu, MenuItem, Snackbar, Toolbar, Typography} from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import axios from "axios";
 
 function Navbar() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
+
+    const [snackOpen, setSnackOpen] = React.useState(false);
+    const [snackMessage, setSnackMessage] = React.useState("");
+    const [snackSeverity, setSnackSeverity] = React.useState<"success" | "error" | "warning">("success");
+
+    const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
+        setSnackMessage(message);
+        setSnackSeverity(severity);
+        setSnackOpen(true);
+    };
+
+    const handleSnackClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === "clickaway") return;
+        setSnackOpen(false);
+    };
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -22,16 +38,43 @@ function Navbar() {
     };
 
     const handleLogout = () => {
-        // TODO: send a request to logout the current user
-        localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        setIsLoggedIn(false);
-        handleClose();
-        navigate("/login");
+        const token = localStorage.getItem("token");
+        axios.post(`http://localhost:4941/api/v1/users/logout`, null, {
+            headers: {
+                "X-Authorization": token,
+            },
+        })
+            .then(() => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("userId");
+
+                showSnackbar("User logged out successfully", "success");
+
+                setIsLoggedIn(false);
+                handleClose();
+                navigate("/login");
+
+                setTimeout(() => {
+                    window.location.href = "/login";
+                }, 500);
+            })
+            .catch((error) => {
+                showSnackbar("Logout failed", "error");
+            })
     };
 
     return (
         <AppBar position="static" sx={{backgroundColor: '#172D2D'}}>
+            <Snackbar autoHideDuration={5000}
+                      open={snackOpen}
+                      onClose={handleSnackClose}
+                      key={snackMessage}
+                      anchorOrigin={{vertical: 'top', horizontal: 'right'}}
+            >
+                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{width: "100%"}}>
+                    {snackMessage}
+                </Alert>
+            </Snackbar>
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{flexGrow: 1}}></Typography>
                 <Box sx={{display: 'flex', gap: 2, alignItems: 'center'}}>
@@ -48,6 +91,7 @@ function Navbar() {
                                 onClick={handleMenu}
                                 color="inherit"
                             >
+                                {/* TODO: instead of account circle, use the user's profile image*/}
                                 <AccountCircle/>
                             </IconButton>
                             <Menu
