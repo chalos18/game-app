@@ -22,6 +22,7 @@ function Navbar() {
     };
 
     const handleLogout = () => {
+        // TODO: send a request to logout the current user
         localStorage.removeItem("token");
         localStorage.removeItem("userId");
         setIsLoggedIn(false);

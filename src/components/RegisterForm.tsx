@@ -7,6 +7,9 @@ const RegisterForm = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [profilePicture, setProfilePicture] = useState<File | null>(null);
+
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +26,7 @@ const RegisterForm = () => {
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -117,15 +121,47 @@ const RegisterForm = () => {
                 setErrorFlag(false);
                 setErrorMessage("");
                 setUserId(response.data);
-                handleLogin();
 
-                setFirstName('');
-                setLastName('');
-                setEmail('');
-                setPassword('');
-                setFieldErrors({});
+                axios.post(`http://localhost:4941/api/v1/users/login`, {
+                    email: email,
+                    password: password,
+                })
+                    .then((response) => {
+                        const {userId, token} = response.data;
 
-                showSnackbar("User registered successfully", "success");
+                        localStorage.setItem("userId", userId);
+                        localStorage.setItem("token", token);
+
+                        if (profilePicture) {
+                            const formData = new FormData();
+                            formData.append("image", profilePicture);
+
+                            profilePicture.arrayBuffer().then((buffer) => {
+                                axios.put(`http://localhost:4941/api/v1/users/${userId}/image`, buffer, {
+                                    headers: {
+                                        "Content-Type": profilePicture.type,
+                                        "X-Authorization": token,
+                                    },
+                                })
+                                    .catch((uploadError) => {
+                                        showSnackbar("Failed to upload profile picture. Please try again before registering.", "error");
+                                    });
+                            });
+                        }
+
+                        setFirstName('');
+                        setLastName('');
+                        setEmail('');
+                        setPassword('');
+                        setFieldErrors({});
+                        setProfilePicture(null);
+
+                        showSnackbar("User registered successfully", "success");
+
+                        setTimeout(() => {
+                            window.location.href = "/home";
+                        }, 500);
+                    });
             })
             .catch((error) => {
                 const backendMessage = error.response.statusText;
@@ -143,6 +179,7 @@ const RegisterForm = () => {
                 setErrorMessage("Validation error.");
             })
     };
+
 
     return (
         <Stack spacing={2}>
@@ -210,6 +247,37 @@ const RegisterForm = () => {
                     ),
                 }}
             />
+            <input
+                accept="image/jpeg,image/png,image/gif"
+                type="file"
+                id="profile-picture"
+                style={{display: 'none'}}
+                onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                        const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                        if (!validTypes.includes(file.type)) {
+                            showSnackbar("Only JPEG, PNG, or GIF files are allowed.", "error");
+                            return;
+                        }
+                        setProfilePicture(file);
+                        setPreviewUrl(URL.createObjectURL(file));
+                    }
+                }}
+
+            />
+            <label htmlFor="profile-picture">
+                <Button variant="outlined" component="span" fullWidth>
+                    {profilePicture ? "Change Profile Picture" : "Upload Profile Picture (optional)"}
+                </Button>
+                {previewUrl && (
+                    <img
+                        src={previewUrl}
+                        alt="Profile Preview"
+                        style={{maxWidth: '100%', maxHeight: 200, borderRadius: 8, marginTop: 8}}
+                    />
+                )}
+            </label>
             <Button variant="contained" color="primary" fullWidth onClick={handleRegister}>
                 Register
             </Button>

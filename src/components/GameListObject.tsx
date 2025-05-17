@@ -1,10 +1,11 @@
-import React from "react";
+import React, {useState} from "react";
 import axios from "axios";
 // import dayjs from "dayjs";
 import {Box, Card, CardContent, CardMedia, Typography} from "@mui/material";
 import CSS from 'csstype';
 import {useNavigate} from "react-router-dom";
 import fallbackAvatar from "../assets/fallback-avatar.png";
+import fallbackGameLogo from "../assets/fallback-game-logo.png";
 
 interface IGameProps {
     game: Game
@@ -15,6 +16,7 @@ const GameListObject = (props: IGameProps) => {
 
     const [imageUrl, setImageUrl] = React.useState<string | null>(null);
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
+    const [imgError, setImgError] = useState(false)
 
     const navigate = useNavigate();
 
@@ -152,7 +154,6 @@ const GameListObject = (props: IGameProps) => {
 
     const gameCardStyles: CSS.Properties = {
         display: "inline-block",
-        // height: "500px",
         width: "300px",
         margin: "10px",
         padding: "0px"
@@ -172,8 +173,9 @@ const GameListObject = (props: IGameProps) => {
                     // height="300"
                     width="200"
                     sx={{objectFit: "cover", color: "black"}}
-                    image={imageUrl || "https://via.placeholder.com/200x200?text=Loading..."}
+                    image={imageUrl || fallbackGameLogo}
                     alt="Game hero"
+                    onError={() => setImgError(true)}
                 />
                 <CardContent>
                     <Typography variant="h6" gutterBottom>

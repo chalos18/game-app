@@ -104,7 +104,6 @@ const LoginForm: React.FC = () => {
 
                 if (Object.keys(parsedErrors).length > 0) {
                     setFieldErrors(parsedErrors);
-                    // Object.values(parsedErrors).forEach((msg) => showSnackbar(msg, "error"));
                 } else {
                     showSnackbar("Login failed. Please check your inputs.", "error");
                     setFieldErrors({});
