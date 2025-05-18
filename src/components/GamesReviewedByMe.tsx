@@ -1,6 +1,6 @@
 import * as React from 'react';
 import axios from "axios";
-import {Alert, AlertTitle, Container, Grid, Paper, TextField, Typography} from "@mui/material";
+import {Container, Paper, Typography} from "@mui/material";
 import GameListObject from "./GameListObject";
 
 const GamesReviewedByMe = () => {
@@ -23,10 +23,10 @@ const GamesReviewedByMe = () => {
         <Container maxWidth="lg" sx={{mt: 4}}>
             <Paper elevation={3} sx={{p: 3, backgroundColor: "#172D2D"}}>
                 <div className="p-4 space-y-4">
-                    <Container sx={{ mt: 8 }}>
+                    <Container sx={{mt: 8}}>
                         <Typography variant="h5">Reviewed by me</Typography>
                         {reviewedGames.map((game: Game) => (
-                            <GameListObject game={game} />
+                            <GameListObject game={game}/>
                         ))}
                     </Container>
                 </div>

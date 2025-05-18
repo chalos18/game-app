@@ -1,6 +1,6 @@
 import * as React from 'react';
 import axios from "axios";
-import {Alert, AlertTitle, Container, Grid, Paper, TextField, Typography} from "@mui/material";
+import {Container, Paper, Typography} from "@mui/material";
 import GameListObject from "./GameListObject";
 import Box from '@mui/material/Box';
 
@@ -30,7 +30,7 @@ const GamesOwnedByMe = () => {
                             display: 'flex',
                             alignItems: 'flex-start'
                         }}>
-                            <GameListObject game={game} />
+                            <GameListObject game={game}/>
                         </Box>
                     ))}
                 </div>

@@ -1,17 +1,9 @@
 import * as React from 'react';
-import axios from "axios";
-import {useNavigate} from "react-router-dom";
-import {useGameStore} from "../store";
-import {Alert, AlertTitle, Container, Grid, Paper, TextField, Typography} from "@mui/material";
-import GameListObject from "./GameListObject";
-import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MyOwnedGames from "./GamesOwnedByMe";
-import MyReviewedGames from "./GamesReviewedByMe";
+import {Container, Paper} from "@mui/material";
+import GamesOwnedByMe from "./GamesOwnedByMe";
+import GamesReviewedByMe from "./GamesReviewedByMe";
 import GamesCreatedByMe from "./GamesCreatedByMe";
 import GamesWishlistedByMe from "./GamesWishlistedByMe";
-import GamesReviewedByMe from "./GamesReviewedByMe";
-import GamesOwnedByMe from "./GamesOwnedByMe";
 
 
 const MyGames = () => {
@@ -21,13 +13,13 @@ const MyGames = () => {
             <Paper elevation={3} sx={{p: 3, backgroundColor: "#172D2D"}}>
                 <div className="p-4 space-y-4">
 
-                    <GamesOwnedByMe />
+                    <GamesOwnedByMe/>
 
-                    <GamesWishlistedByMe />
+                    <GamesWishlistedByMe/>
 
-                    <GamesCreatedByMe />
+                    <GamesCreatedByMe/>
 
-                    <GamesReviewedByMe />
+                    <GamesReviewedByMe/>
                 </div>
             </Paper>
         </Container>

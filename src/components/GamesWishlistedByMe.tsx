@@ -1,8 +1,6 @@
 import * as React from 'react';
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
-import {useGameStore} from "../store";
-import {Alert, AlertTitle, Container, Grid, Paper, TextField, Typography} from "@mui/material";
+import {Container, Paper, Typography} from "@mui/material";
 import GameListObject from "./GameListObject";
 import Box from '@mui/material/Box';
 
@@ -34,7 +32,7 @@ const GamesWishlistedByMe = () => {
                             display: 'flex',
                             alignItems: 'flex-start'
                         }}>
-                            <GameListObject game={game} />
+                            <GameListObject game={game}/>
                         </Box>
                     ))}
                 </div>
