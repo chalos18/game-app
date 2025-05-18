@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, {useState} from "react";
-import {Box, Card, CardContent, CardMedia, CircularProgress, Grid, Typography} from "@mui/material";
+import {Box, Card, CardContent, CardMedia, Grid, Typography} from "@mui/material";
 import {HashLink} from 'react-router-hash-link';
 import {useNavigate, useParams} from "react-router-dom";
 import CSS from "csstype";

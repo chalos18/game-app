@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {Alert, AppBar, Box, Button, IconButton, Menu, MenuItem, Snackbar, Toolbar, Typography} from '@mui/material';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import axios from "axios";
 import fallbackAvatar from "../assets/fallback-avatar.png";
 

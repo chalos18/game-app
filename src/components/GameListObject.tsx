@@ -155,6 +155,7 @@ const GameListObject = (props: IGameProps) => {
     const gameCardStyles: CSS.Properties = {
         display: "inline-block",
         width: "300px",
+        height: "500px",
         margin: "10px",
         padding: "0px"
     }
@@ -170,50 +171,72 @@ const GameListObject = (props: IGameProps) => {
             <Box onClick={() => navigate(`/games/${game.gameId}`)}>
                 <CardMedia
                     component="img"
-                    // height="300"
+                    height="300"
                     width="200"
                     sx={{objectFit: "cover", color: "black"}}
                     image={imageUrl || fallbackGameLogo}
                     alt="Game hero"
                     onError={() => setImgError(true)}
                 />
-                <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                        {game.title}
-                    </Typography>
+                <CardContent
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        // justifyContent: "space-between",
+                        height: "calc(500px - 300px)",
+                        overflow: "hidden"
+                    }}
+                >
+                    <Box>
+                        <Typography variant="h6" gutterBottom noWrap>
+                            {game.title}
+                        </Typography>
 
-                    <Typography variant="body2" color="textSecondary">
-                        {game.price === 0.00 ? "FREE" : "$" + game.price?.toFixed(2)}
-                    </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            {game.price === 0.00 ? "FREE" : "$" + game.price?.toFixed(2)}
+                        </Typography>
 
-                    <Typography variant="body2" color="textSecondary">
-                        {getGenreNameById(game.genreId)}
-                    </Typography>
+                        <Typography variant="body2" color="textSecondary" noWrap>
+                            {getGenreNameById(game.genreId)}
+                        </Typography>
 
-                    <Typography variant="body2" color="textSecondary">
-                        {getPlatformNamesByIds(game.platformIds)}
-                    </Typography>
+                        <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            sx={{
+                                display: "-webkit-box",
+                                WebkitLineClamp: 1,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                            }}
+                        >
+                            {getPlatformNamesByIds(game.platformIds)}
+                        </Typography>
+                    </Box>
 
-                    <Typography variant="body2" color="textSecondary">
-                        Created {new Date(game.creationDate).toLocaleString("en-NZ", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                    })}
-                    </Typography>
+                    <Box mt={1}>
+                        <Typography variant="body2" color="textSecondary">
+                            Created {new Date(game.creationDate).toLocaleString("en-NZ", {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                        })}
+                        </Typography>
+                    </Box>
 
                     <Box display="flex" alignItems="center" mt={1}>
                         <img
                             src={userImageUrl || fallbackAvatar}
                             alt="Creator"
-                            width={50}
-                            height={50}
-                            style={{borderRadius: "50%", marginRight: 8}}
+                            width={40}
+                            height={40}
+                            style={{ borderRadius: "50%", marginRight: 8 }}
                         />
-                        <Typography variant="body2">
+                        <Typography variant="body2" noWrap>
                             {game.creatorFirstName} {game.creatorLastName}
                         </Typography>
                     </Box>
                 </CardContent>
+
             </Box>
         </Card>
     )

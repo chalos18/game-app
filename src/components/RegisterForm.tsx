@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Alert, Button, IconButton, InputAdornment, Snackbar, Stack, TextField} from '@mui/material';
 import axios from "axios";
 import {Visibility, VisibilityOff} from '@mui/icons-material';
@@ -23,6 +23,8 @@ const RegisterForm = () => {
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
 
     useEffect(() => {
@@ -190,9 +192,9 @@ const RegisterForm = () => {
                 value={firstName}
                 onChange={(e) => {
                     setFirstName(e.target.value);
-                    setFieldErrors(prev => ({ ...prev, firstName: '' }));
+                    setFieldErrors(prev => ({...prev, firstName: ''}));
                 }}
-                slotProps={{ htmlInput: { maxLength: 64 } }}
+                slotProps={{htmlInput: {maxLength: 64}}}
                 error={!!fieldErrors.firstName}
                 helperText={fieldErrors.firstName || `${firstName.length}/64 characters`}
             />
@@ -203,9 +205,9 @@ const RegisterForm = () => {
                 value={lastName}
                 onChange={(e) => {
                     setLastName(e.target.value);
-                    setFieldErrors(prev => ({ ...prev, lastName: '' }));
+                    setFieldErrors(prev => ({...prev, lastName: ''}));
                 }}
-                slotProps={{ htmlInput: { maxLength: 64 } }}
+                slotProps={{htmlInput: {maxLength: 64}}}
                 error={!!fieldErrors.lastName}
                 helperText={fieldErrors.lastName || `${lastName.length}/64 characters`}
             />
@@ -260,12 +262,22 @@ const RegisterForm = () => {
                 style={{display: 'none'}}
                 onChange={(e) => {
                     const file = e.target.files?.[0];
+
+                    if (fileInputRef.current) {
+                        fileInputRef.current.value = '';
+                    }
+
                     if (file) {
                         const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
                         if (!validTypes.includes(file.type)) {
                             showSnackbar("Only JPEG, PNG, or GIF files are allowed.", "error");
                             return;
                         }
+
+                        if (previewUrl) {
+                            URL.revokeObjectURL(previewUrl);
+                        }
+
                         setProfilePicture(file);
                         setPreviewUrl(URL.createObjectURL(file));
                     }
