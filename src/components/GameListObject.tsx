@@ -229,7 +229,7 @@ const GameListObject = (props: IGameProps) => {
                             alt="Creator"
                             width={40}
                             height={40}
-                            style={{ borderRadius: "50%", marginRight: 8 }}
+                            style={{borderRadius: "50%", marginRight: 8}}
                         />
                         <Typography variant="body2" noWrap>
                             {game.creatorFirstName} {game.creatorLastName}
