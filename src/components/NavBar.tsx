@@ -3,6 +3,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import {Alert, AppBar, Box, Button, IconButton, Menu, MenuItem, Snackbar, Toolbar, Typography} from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import axios from "axios";
+import fallbackAvatar from "../assets/fallback-avatar.png";
 
 function Navbar() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -12,6 +13,9 @@ function Navbar() {
     const [snackOpen, setSnackOpen] = React.useState(false);
     const [snackMessage, setSnackMessage] = React.useState("");
     const [snackSeverity, setSnackSeverity] = React.useState<"success" | "error" | "warning">("success");
+
+    const [imageUrl, setImageUrl] = React.useState<string | null>(null);
+    const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
 
     const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
         setSnackMessage(message);
@@ -63,6 +67,25 @@ function Navbar() {
             })
     };
 
+    React.useEffect(() => {
+        const userId = localStorage.getItem("userId");
+        axios
+            .get(`http://localhost:4941/api/v1/users/${userId}/image`, {
+                responseType: 'blob'
+            })
+            .then((response) => {
+                const url = URL.createObjectURL(response.data);
+                setUserImageUrl(url);
+            })
+            .catch((error) => {
+                if (error.response?.status === 404) {
+                    setUserImageUrl(null);
+                } else {
+                    setUserImageUrl(fallbackAvatar);
+                }
+            });
+    }, []);
+
     return (
         <AppBar position="static" sx={{backgroundColor: '#172D2D'}}>
             <Snackbar autoHideDuration={5000}
@@ -91,14 +114,19 @@ function Navbar() {
                                 onClick={handleMenu}
                                 color="inherit"
                             >
-                                {/* TODO: instead of account circle, use the user's profile image*/}
-                                <AccountCircle/>
+                                <img
+                                    src={userImageUrl || fallbackAvatar}
+                                    alt="Creator"
+                                    width={50}
+                                    height={50}
+                                    style={{borderRadius: "50%", marginRight: 8}}
+                                />
                             </IconButton>
                             <Menu
                                 id="menu-appbar"
                                 anchorEl={anchorEl}
                                 anchorOrigin={{
-                                    vertical: 'top',
+                                    vertical: 'bottom',
                                     horizontal: 'right',
                                 }}
                                 keepMounted

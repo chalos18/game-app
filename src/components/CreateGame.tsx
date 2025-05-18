@@ -1,15 +1,7 @@
 import React, {useState} from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import {
-    Alert,
-    Button,
-    Paper,
-    Snackbar,
-    Stack,
-    TextField,
-    Typography
-} from "@mui/material";
+import {useNavigate} from "react-router-dom";
+import {Alert, Button, Paper, Snackbar, Stack, TextField, Typography} from "@mui/material";
 import CSS from "csstype";
 
 interface Game {
@@ -40,15 +32,6 @@ const CreateGame = () => {
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
     const navigate = useNavigate();
-
-    const [errors, setErrors] = React.useState({
-        title: false,
-        description: false,
-        genreId: false,
-        price: false,
-        platformIds: false
-    });
-
 
     React.useEffect(() => {
         getGames();
@@ -82,17 +65,26 @@ const CreateGame = () => {
             "data/platformIds must be array": ["platformIds", "Platform IDs must be comma-separated"],
             "data/price must be integer": ["price", "Price must be a number"],
             "data/price must be >= 0": ["price", "Price must be non-negative"],
+            "Duplicate petition": ["title", "Game already exists"],
+            "No platform with id": ["platformIds", "Platform ID must reference an existing platform"],
         };
 
         const result: { [key: string]: string } = {};
-        for (const key in rules) {
-            if (message.includes(key)) {
-                const [field, text] = rules[key];
-                result[field] = text;
+
+        const parts = message.split(/[,;]+/).map(part => part.trim());
+
+        for (const part of parts) {
+            for (const key in rules) {
+                if (part.includes(key)) {
+                    const [field, text] = rules[key];
+                    result[field] = text;
+                }
             }
         }
+
         return result;
     };
+
 
 
     const addGame = (e: React.FormEvent) => {
@@ -112,22 +104,6 @@ const CreateGame = () => {
             return;
         }
 
-        const newErrors = {
-            title: newTitle === "",
-            description: newDescription === "",
-            genreId: newGenreId === "",
-            price: newPrice === "",
-            platformIds: newPlatformIds === ""
-        };
-
-        setErrors(newErrors);
-
-        if (Object.values(newErrors).some(Boolean)) {
-            showSnackbar("Please fill out all fields", "warning");
-            return;
-        }
-
-        console.log(newTitle, newDescription, newGenreId, newPrice, newPlatformIds);
         const token = localStorage.getItem("token");
         axios
             .post("http://localhost:4941/api/v1/games", {
@@ -152,13 +128,6 @@ const CreateGame = () => {
                 setNewGenreId("");
                 setNewPrice("");
                 setNewPlatformIds("");
-                setErrors({
-                    title: false,
-                    description: false,
-                    genreId: false,
-                    price: false,
-                    platformIds: false
-                });
                 setFieldErrors({});
             })
             .catch((error) => {
@@ -184,61 +153,61 @@ const CreateGame = () => {
                 open={snackOpen}
                 autoHideDuration={5000}
                 onClose={handleSnackClose}
-                anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                style={{ zIndex: 9999 }}
+                anchorOrigin={{vertical: "top", horizontal: "right"}}
+                style={{zIndex: 9999}}
             >
-                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{ width: "100%" }}>
+                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{width: "100%"}}>
                     {snackMessage}
                 </Alert>
             </Snackbar>
 
             <Typography variant="h5" gutterBottom>Add a new game</Typography>
             {/*<form onSubmit={addGame}>*/}
-                <Stack spacing={2}>
-                    <TextField
-                        label="Title"
-                        value={newTitle}
-                        onChange={(e) => setNewTitle(e.target.value)}
-                        error={!!fieldErrors.title}
-                        helperText={fieldErrors.title || `${newTitle.length}/128 characters`}
-                    />
+            <Stack spacing={2}>
+                <TextField
+                    label="Title"
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    error={!!fieldErrors.title}
+                    helperText={fieldErrors.title || `${newTitle.length}/128 characters`}
+                />
 
-                    <TextField
-                        label="Description"
-                        value={newDescription}
-                        onChange={(e) => setNewDescription(e.target.value)}
-                        error={!!fieldErrors.description}
-                        helperText={fieldErrors.description || `${newDescription.length}/1024 characters`}
-                    />
+                <TextField
+                    label="Description"
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                    error={!!fieldErrors.description}
+                    helperText={fieldErrors.description || `${newDescription.length}/1024 characters`}
+                />
 
-                    <TextField
-                        label="Genre ID"
-                        type="number"
-                        value={newGenreId}
-                        onChange={(e) => setNewGenreId(e.target.value === "" ? "" : parseInt(e.target.value))}
-                        error={!!fieldErrors.genreId}
-                        helperText={fieldErrors.genreId}
-                    />
+                <TextField
+                    label="Genre ID"
+                    type="number"
+                    value={newGenreId}
+                    onChange={(e) => setNewGenreId(e.target.value === "" ? "" : parseInt(e.target.value))}
+                    error={!!fieldErrors.genreId}
+                    helperText={fieldErrors.genreId}
+                />
 
-                    <TextField
-                        label="Price"
-                        type="number"
-                        value={newPrice}
-                        onChange={(e) => setNewPrice(e.target.value === "" ? "" : parseFloat(e.target.value))}
-                        error={!!fieldErrors.price}
-                        helperText={fieldErrors.price}
-                        slotProps={{ htmlInput: { step: 1 } }}
-                    />
+                <TextField
+                    label="Price"
+                    type="number"
+                    value={newPrice}
+                    onChange={(e) => setNewPrice(e.target.value === "" ? "" : parseFloat(e.target.value))}
+                    error={!!fieldErrors.price}
+                    helperText={fieldErrors.price}
+                    slotProps={{htmlInput: {step: 1}}}
+                />
 
-                    <TextField
-                        label="Platform IDs (comma-separated)"
-                        value={newPlatformIds}
-                        onChange={(e) => setNewPlatformIds(e.target.value)}
-                        error={!!fieldErrors.platformIds}
-                        helperText={fieldErrors.platformIds}
-                    />
-                    <Button variant="contained" type="submit" onClick={addGame}>Add Game</Button>
-                </Stack>
+                <TextField
+                    label="Platform IDs (comma-separated)"
+                    value={newPlatformIds}
+                    onChange={(e) => setNewPlatformIds(e.target.value)}
+                    error={!!fieldErrors.platformIds}
+                    helperText={fieldErrors.platformIds}
+                />
+                <Button variant="contained" type="submit" onClick={addGame}>Add Game</Button>
+            </Stack>
             {/*</form>*/}
         </Paper>
     );

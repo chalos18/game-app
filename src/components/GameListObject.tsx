@@ -53,7 +53,7 @@ const GameListObject = (props: IGameProps) => {
             })
             .catch((error) => {
                 console.error("Error fetching image", error);
-                setImageUrl("https://via.placeholder.com/200x200?text=No+Image");
+                setImageUrl(fallbackGameLogo);
             });
     }, [game.gameId]);
 
@@ -70,7 +70,7 @@ const GameListObject = (props: IGameProps) => {
                 if (error.response?.status === 404) {
                     setUserImageUrl(null);
                 } else {
-                    setUserImageUrl("https://via.placeholder.com/200x200?text=No+Image");
+                    setUserImageUrl(fallbackGameLogo);
                 }
             });
     }, [game.gameId]);
@@ -215,18 +215,6 @@ const GameListObject = (props: IGameProps) => {
                     </Box>
                 </CardContent>
             </Box>
-
-            {/*<Snackbar autoHideDuration={5000}*/}
-            {/*          open={snackOpen}*/}
-            {/*          onClose={handleSnackClose}*/}
-            {/*          key={snackMessage}*/}
-            {/*          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}*/}
-            {/*>*/}
-            {/*    <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{ width: "100%" }}>*/}
-            {/*        {snackMessage}*/}
-            {/*    </Alert>*/}
-            {/*</Snackbar>*/}
-
         </Card>
     )
 }

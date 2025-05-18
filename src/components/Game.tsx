@@ -140,11 +140,10 @@ const Game = () => {
             .then((response) => {
                 const url = URL.createObjectURL(response.data);
                 setImageUrl(url);
-                setIsLoading(false);
             })
             .catch((error) => {
                 console.error("Error fetching image", error);
-                setImageUrl("https://via.placeholder.com/200x200?text=No+Image");
+                setImageUrl(fallbackGameLogo);
             });
     }, [game.gameId]);
 
@@ -161,7 +160,7 @@ const Game = () => {
                 if (error.response?.status === 404) {
                     setUserImageUrl(null);
                 } else {
-                    setUserImageUrl("https://via.placeholder.com/200x200?text=No+Image");
+                    setUserImageUrl(fallbackAvatar);
                 }
             });
     }, [game.gameId]);
@@ -273,20 +272,15 @@ const Game = () => {
             <Box sx={{display: 'flex', flexDirection: 'column'}}>
                 <Card sx={{...gameCardStyles}}>
                     <Box sx={{display: 'flex', flexDirection: 'row'}}>
-                        {isLoading && (
-                            <CircularProgress color="secondary"/>
-                        )}
-                        {!isLoading && (
-                            <CardMedia
-                                component="img"
-                                sx={{
-                                    width: 600,
-                                    objectFit: "cover",
-                                }}
-                                image={imageUrl || fallbackGameLogo}
-                                alt="Game cover"
-                            />
-                        )}
+                        <CardMedia
+                            component="img"
+                            sx={{
+                                width: 600,
+                                objectFit: "cover",
+                            }}
+                            image={imageUrl || fallbackGameLogo}
+                            alt="Game cover"
+                        />
                         <CardContent
                             sx={{
                                 flex: 1,
@@ -387,7 +381,7 @@ const Game = () => {
                                 flex: 1,
                             }}
                         >
-                            <Typography variant="h6">
+                            <Typography variant="h6" id="all-reviews">
                                 Reviews ({reviews.length})
                             </Typography>
                             {reviews.length === 0 && (
@@ -397,7 +391,7 @@ const Game = () => {
                             )}
 
                             {reviews.map((review, idx) => (
-                                <Box key={idx} id="all-reviews" sx={{
+                                <Box key={idx} sx={{
                                     borderBottom: "1px solid #ddd",
                                     padding: "10px 0",
                                     display: 'flex',

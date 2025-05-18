@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, Typography, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import {Button, Container, Typography} from '@mui/material';
+import {useNavigate} from 'react-router-dom';
 import CreateGame from "../components/CreateGame";
 
 function Profile() {
@@ -19,7 +19,7 @@ function Profile() {
             >
                 Back to Games
             </Button>
-            <CreateGame />
+            <CreateGame/>
         </Container>
     );
 }

@@ -16,9 +16,6 @@ const RegisterForm = () => {
 
     const [userId, setUserId] = useState('');
 
-    const [errorFlag, setErrorFlag] = React.useState(false);
-    const [errorMessage, setErrorMessage] = React.useState("")
-
     const [snackOpen, setSnackOpen] = React.useState(false);
     const [snackMessage, setSnackMessage] = React.useState("");
     const [snackSeverity, setSnackSeverity] = React.useState<"success" | "error" | "warning">("success");
@@ -49,21 +46,25 @@ const RegisterForm = () => {
     };
 
     const parseValidationError = (message: string): { [key: string]: string } => {
-        const errors: { [key: string]: string } = {};
+        const rules: { [key: string]: [string, string] } = {
+            "email must match format": ["email", "Please enter a valid email address"],
+            "password must match format": ["password", "Password must be at least 6 characters"],
+            "Email already in use": ["email", "Email already in use"],
+        };
 
-        if (message.includes("email must match format")) {
-            errors.email = "Please enter a valid email address";
+        const result: { [key: string]: string } = {};
+        const parts = message.split(/[,;]+/).map(part => part.trim());
+
+        for (const part of parts) {
+            for (const key in rules) {
+                if (part.includes(key)) {
+                    const [field, text] = rules[key];
+                    result[field] = text;
+                }
+            }
         }
 
-        if (message.includes("password must match format")) {
-            errors.password = "The password must be at least 6 characters long";
-        }
-
-        if (message.includes("Email already in use")) {
-            errors.email = "Email already in use";
-        }
-
-        return errors;
+        return result;
     };
 
 
@@ -99,9 +100,6 @@ const RegisterForm = () => {
                     showSnackbar("Login failed. Please check your inputs.", "error");
                     setFieldErrors({});
                 }
-
-                setErrorFlag(true);
-                setErrorMessage("Validation error.");
             })
     };
 
@@ -118,8 +116,6 @@ const RegisterForm = () => {
             password: password,
         })
             .then((response) => {
-                setErrorFlag(false);
-                setErrorMessage("");
                 setUserId(response.data);
 
                 axios.post(`http://localhost:4941/api/v1/users/login`, {
@@ -164,20 +160,13 @@ const RegisterForm = () => {
                     });
             })
             .catch((error) => {
-                const backendMessage = error.response.statusText;
+                const backendMessage = error.response?.data?.error ?? error.response?.statusText ?? "Error adding game";
                 const parsedErrors = parseValidationError(backendMessage);
+                setFieldErrors(parsedErrors);
 
-                if (Object.keys(parsedErrors).length > 0) {
-                    setFieldErrors(parsedErrors);
-                    // Object.values(parsedErrors).forEach((msg) => showSnackbar(msg, "error"));
-                } else {
-                    showSnackbar("Registration failed. Please check your inputs.", "error");
-                    setFieldErrors({});
-                }
-
-                setErrorFlag(true);
-                setErrorMessage("Validation error.");
-            })
+                const fallback = Object.keys(parsedErrors).length === 0;
+                showSnackbar(fallback ? backendMessage : "Please correct the highlighted fields", "error");
+            });
     };
 
 
@@ -199,26 +188,26 @@ const RegisterForm = () => {
                 fullWidth
                 required={true}
                 value={firstName}
-                slotProps={{
-                    htmlInput: {
-                        maxLength: 64
-                    }
+                onChange={(e) => {
+                    setFirstName(e.target.value);
+                    setFieldErrors(prev => ({ ...prev, firstName: '' }));
                 }}
-                onChange={(e) => setFirstName(e.target.value)}
-                helperText={`${firstName.length}/64 characters`}
+                slotProps={{ htmlInput: { maxLength: 64 } }}
+                error={!!fieldErrors.firstName}
+                helperText={fieldErrors.firstName || `${firstName.length}/64 characters`}
             />
             <TextField
                 label="Last Name"
                 fullWidth
                 required={true}
                 value={lastName}
-                slotProps={{
-                    htmlInput: {
-                        maxLength: 64
-                    }
+                onChange={(e) => {
+                    setLastName(e.target.value);
+                    setFieldErrors(prev => ({ ...prev, lastName: '' }));
                 }}
-                onChange={(e) => setLastName(e.target.value)}
-                helperText={`${lastName.length}/64 characters`}
+                slotProps={{ htmlInput: { maxLength: 64 } }}
+                error={!!fieldErrors.lastName}
+                helperText={fieldErrors.lastName || `${lastName.length}/64 characters`}
             />
             <TextField
                 label="Email Address"
@@ -228,7 +217,7 @@ const RegisterForm = () => {
                 value={email}
                 onChange={(e) => {
                     setEmail(e.target.value);
-                    setFieldErrors(prev => ({...prev, email: ''}));  // Clear error on change
+                    setFieldErrors(prev => ({...prev, email: ''}));
                 }}
                 slotProps={{
                     htmlInput: {
@@ -237,7 +226,6 @@ const RegisterForm = () => {
                 }}
                 error={!!fieldErrors.email}
                 helperText={fieldErrors.email}
-                // helperText={`${lastName.length}/256 characters`}
             />
             <TextField
                 label="Password"
