@@ -84,10 +84,9 @@ const GamesCreatedByMe = () => {
 
     return (
         <Container maxWidth="lg" sx={{mt: 4}}>
-            <Paper elevation={3} sx={{p: 3, backgroundColor: "#172D2D"}}>
+            <Paper elevation={3} sx={{p: 3, backgroundColor: "#406262"}}>
                 <div className="p-4 space-y-4">
-                    <Typography variant="h5">Created by me</Typography>
-                    <Container sx={{mt: 8}}>
+                    <Container>
                         {createdGames.map((game: Game) => {
                             console.log("Game Description:", game.description);
                             return <GameListObject key={game.gameId} game={game} showEditButtons={true}/>;

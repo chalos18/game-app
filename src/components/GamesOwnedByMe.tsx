@@ -20,9 +20,8 @@ const GamesOwnedByMe = () => {
 
     return (
         <Container maxWidth="lg" sx={{mt: 4}}>
-            <Paper elevation={3} sx={{p: 3, backgroundColor: "#172D2D"}}>
+            <Paper elevation={3} sx={{p: 3, backgroundColor: "#406262"}}>
                 <div className="p-4 space-y-4">
-                    <Typography variant="h5">Owned by me</Typography>
                     {ownedGames.map((game: Game) => (
                         <Box sx={{
                             borderBottom: "1px solid #ddd",

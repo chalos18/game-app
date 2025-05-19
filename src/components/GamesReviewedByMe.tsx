@@ -21,10 +21,9 @@ const GamesReviewedByMe = () => {
 
     return (
         <Container maxWidth="lg" sx={{mt: 4}}>
-            <Paper elevation={3} sx={{p: 3, backgroundColor: "#172D2D"}}>
+            <Paper elevation={3} sx={{p: 3, backgroundColor: "#406262"}}>
                 <div className="p-4 space-y-4">
-                    <Container sx={{mt: 8}}>
-                        <Typography variant="h5">Reviewed by me</Typography>
+                    <Container>
                         {reviewedGames.map((game: Game) => (
                             <GameListObject game={game}/>
                         ))}

@@ -70,7 +70,6 @@ const CreateGame = () => {
     }, [previewUrl]);
 
     const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
-        console.log("Snackbar triggered:", message);
         setSnackMessage(message);
         setSnackSeverity(severity);
         setSnackOpen(true);

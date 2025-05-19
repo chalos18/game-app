@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import axios from "axios";
 // import dayjs from "dayjs";
 import {
+    Alert,
     Box,
     Button,
     Card,
@@ -10,7 +11,7 @@ import {
     CardMedia,
     Dialog,
     DialogContent,
-    DialogTitle,
+    DialogTitle, Snackbar,
     Typography
 } from "@mui/material";
 import CSS from 'csstype';
@@ -40,8 +41,6 @@ const GameListObject = (props: IGameProps) => {
     const [errorFlag, setErrorFlag] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("");
 
-    const [gameDescription, setGameDescription] = React.useState("");
-
     // const [dialogGame, setDialogGame] = React.useState<Game | null>(null);
 
     const [genres, setGenres] = React.useState<{ genreId: number, name: string }[]>([]);
@@ -61,33 +60,6 @@ const GameListObject = (props: IGameProps) => {
 
     const [openEditDialog, setOpenEditDialog] = React.useState(false)
 
-    const parseValidationError = (message: string): { [key: string]: string } => {
-        const rules: { [key: string]: [string, string] } = {
-            "data/genreId must be >= 0": ["genreId", "Genre ID must be non-negative"],
-            "No genre with id": ["genreId", "Genre ID must reference an existing genre"],
-            "data/platformIds must be array": ["platformIds", "Platform IDs must be comma-separated"],
-            "data/price must be integer": ["price", "Price must be a number"],
-            "data/price must be >= 0": ["price", "Price must be non-negative"],
-            "Duplicate petition": ["title", "Game already exists"],
-            "No platform with id": ["platformIds", "Platform ID must reference an existing platform"],
-            "data/platformIds must NOT have fewer than 1 items": ["platformIds", "Game must have at least one Platform"],
-        };
-
-        const result: { [key: string]: string } = {};
-
-        const parts = message.split(/[,;]+/).map(part => part.trim());
-
-        for (const part of parts) {
-            for (const key in rules) {
-                if (part.includes(key)) {
-                    const [field, text] = rules[key];
-                    result[field] = text;
-                }
-            }
-        }
-
-        return result;
-    };
 
     const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
         setSnackMessage(message);
@@ -99,8 +71,12 @@ const GameListObject = (props: IGameProps) => {
         setOpenEditDialog(false);
     };
 
+    const handleSnackClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === "clickaway") return;
+        setSnackOpen(false);
+    };
+
     // const deleteGameFromStore = useGameStore(state => state.removeGame)
-    //
     // const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
 
 
@@ -178,8 +154,6 @@ const GameListObject = (props: IGameProps) => {
             })
             .catch((error) => {
                 showSnackbar("Error getting game genres: " + error.toString(), "error");
-                setErrorFlag(true);
-                setErrorMessage(error.toString());
             });
     };
 
@@ -191,8 +165,6 @@ const GameListObject = (props: IGameProps) => {
             })
             .catch((error) => {
                 showSnackbar("Error getting game platforms: " + error.toString(), "error");
-                setErrorFlag(true);
-                setErrorMessage(error.toString());
             });
     };
 
@@ -278,8 +250,7 @@ const GameListObject = (props: IGameProps) => {
                 game.description = response.data.description;
             })
             .catch((error) => {
-                setErrorFlag(true);
-                setErrorMessage(error.toString());
+                showSnackbar("Error getting game: " + error.toString(), "error");
             });
     }
 
@@ -292,113 +263,127 @@ const GameListObject = (props: IGameProps) => {
         padding: "0px"
     }
     return (
-        <Card sx={{
-            ...gameCardStyles,
-            cursor: 'pointer',
-            '&:hover': {boxShadow: 6, transform: 'scale(1.02)'},
-            transition: 'all 0.2s ease-in-out',
-        }}>
-            <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)} fullWidth maxWidth="sm">
-                <DialogTitle>Edit Game</DialogTitle>
-                <DialogContent>
-                    <GameEditForm
-                        game={game}
-                        genres={genres}
-                        platforms={platforms}
-                        onUpdate={({newTitle, newDescription, newGenreId, newPrice, newPlatformIds}) => {
-                            updateGame(newTitle, newDescription, newGenreId, newPrice, newPlatformIds);
-                            setOpenEditDialog(false);
-                        }}
-                        onCancel={() => handleEditDialogClose()}
-                    />
-                </DialogContent>
-            </Dialog>
+        <>
+            <Snackbar
+                open={snackOpen}
+                autoHideDuration={5000}
+                onClose={handleSnackClose}
+                anchorOrigin={{vertical: "top", horizontal: "right"}}
+                style={{zIndex: 9999}}
+            >
+                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{width: "100%"}}>
+                    {snackMessage}
+                </Alert>
+            </Snackbar>
+            <Card sx={{
+                ...gameCardStyles,
+                cursor: 'pointer',
+                '&:hover': {boxShadow: 6, transform: 'scale(1.02)'},
+                transition: 'all 0.2s ease-in-out',
+            }}>
 
-            <Box onClick={() => navigate(`/games/${game.gameId}`)}>
-                <CardMedia
-                    component="img"
-                    height="300"
-                    width="200"
-                    sx={{objectFit: "cover", color: "black"}}
-                    image={imageUrl || fallbackGameLogo}
-                    alt="Game hero"
-                    onError={() => setImgError(true)}
-                />
-                <CardContent
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        height: "calc(500px - 300px)",
-                        overflowY: openEditDialog ? "auto" : "hidden"
-                    }}
-                >
-                    <Box>
-                        <Typography variant="h6" gutterBottom noWrap>
-                            {game.title}
-                        </Typography>
-
-                        <Typography variant="body2" color="textSecondary">
-                            {game.price === 0.00 ? "FREE" : "$" + game.price?.toFixed(2)}
-                        </Typography>
-
-                        <Typography variant="body2" color="textSecondary" noWrap>
-                            {getGenreNameById(game.genreId)}
-                        </Typography>
-
-                        <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            sx={{
-                                display: "-webkit-box",
-                                WebkitLineClamp: 1,
-                                WebkitBoxOrient: "vertical",
-                                overflow: "hidden",
+                <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)} fullWidth maxWidth="sm">
+                    <DialogTitle>Edit Game</DialogTitle>
+                    <DialogContent>
+                        <GameEditForm
+                            game={game}
+                            genres={genres}
+                            platforms={platforms}
+                            onUpdate={({newTitle, newDescription, newGenreId, newPrice, newPlatformIds}) => {
+                                updateGame(newTitle, newDescription, newGenreId, newPrice, newPlatformIds);
+                                setOpenEditDialog(false);
                             }}
-                        >
-                            {getPlatformNamesByIds(game.platformIds)}
-                        </Typography>
-                    </Box>
-
-                    <Box mt={1}>
-                        <Typography variant="body2" color="textSecondary">
-                            Created {new Date(game.creationDate).toLocaleString("en-NZ", {
-                            dateStyle: "medium",
-                            timeStyle: "short",
-                        })}
-                        </Typography>
-                    </Box>
-
-                    <Box display="flex" alignItems="center" mt={1}>
-                        <img
-                            src={userImageUrl || fallbackAvatar}
-                            alt="Creator"
-                            width={40}
-                            height={40}
-                            style={{borderRadius: "50%", marginRight: 8}}
+                            onCancel={() => handleEditDialogClose()}
                         />
-                        <Typography variant="body2" noWrap>
-                            {game.creatorFirstName} {game.creatorLastName}
-                        </Typography>
+                    </DialogContent>
+                </Dialog>
 
-                        <CardActions>
-                            {props.showEditButtons && (
-                                <Button
-                                    variant="outlined"
-                                    endIcon={<EditIcon/>}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setOpenEditDialog((prev) => !prev);
-                                    }}
-                                >
-                                    {openEditDialog ? "Cancel" : "Edit"}
-                                </Button>
+                <Box onClick={() => navigate(`/games/${game.gameId}`)}>
+                    <CardMedia
+                        component="img"
+                        height="300"
+                        width="200"
+                        sx={{objectFit: "cover", color: "black"}}
+                        image={imageUrl || fallbackGameLogo}
+                        alt="Game hero"
+                        onError={() => setImgError(true)}
+                    />
+                    <CardContent
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "calc(500px - 300px)",
+                            overflowY: openEditDialog ? "auto" : "hidden"
+                        }}
+                    >
+                        <Box>
+                            <Typography variant="h6" gutterBottom noWrap>
+                                {game.title}
+                            </Typography>
 
-                            )}
-                        </CardActions>
-                    </Box>
-                </CardContent>
-            </Box>
-        </Card>
+                            <Typography variant="body2" color="textSecondary">
+                                {game.price === 0.00 ? "FREE" : "$" + game.price?.toFixed(2)}
+                            </Typography>
+
+                            <Typography variant="body2" color="textSecondary" noWrap>
+                                {getGenreNameById(game.genreId)}
+                            </Typography>
+
+                            <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                sx={{
+                                    display: "-webkit-box",
+                                    WebkitLineClamp: 1,
+                                    WebkitBoxOrient: "vertical",
+                                    overflow: "hidden",
+                                }}
+                            >
+                                {getPlatformNamesByIds(game.platformIds)}
+                            </Typography>
+                        </Box>
+
+                        <Box mt={1}>
+                            <Typography variant="body2" color="textSecondary">
+                                Created {new Date(game.creationDate).toLocaleString("en-NZ", {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                            })}
+                            </Typography>
+                        </Box>
+
+                        <Box display="flex" alignItems="center" mt={1}>
+                            <img
+                                src={userImageUrl || fallbackAvatar}
+                                alt="Creator"
+                                width={40}
+                                height={40}
+                                style={{borderRadius: "50%", marginRight: 8}}
+                            />
+                            <Typography variant="body2" noWrap>
+                                {game.creatorFirstName} {game.creatorLastName}
+                            </Typography>
+
+                            <CardActions>
+                                {props.showEditButtons && (
+                                    <Button
+                                        variant="outlined"
+                                        endIcon={<EditIcon/>}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setOpenEditDialog((prev) => !prev);
+                                        }}
+                                    >
+                                        {openEditDialog ? "Cancel" : "Edit"}
+                                    </Button>
+
+                                )}
+                            </CardActions>
+                        </Box>
+                    </CardContent>
+                </Box>
+            </Card>
+        </>
     )
 }
 export default GameListObject
