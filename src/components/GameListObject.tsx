@@ -9,8 +9,10 @@ import {
     CardActions,
     CardContent,
     CardMedia,
-    Dialog, DialogActions,
-    DialogContent, DialogContentText,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
     DialogTitle,
     Snackbar,
     Typography
@@ -27,7 +29,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 interface IGameProps {
     game: Game,
     showEditButtons?: boolean,
-    onDelete?: () => void,
 }
 
 const GameListObject = (props: IGameProps) => {
@@ -54,7 +55,16 @@ const GameListObject = (props: IGameProps) => {
     const [newDescription, setNewDescription] = React.useState("");
     const [newGenreId, setNewGenreId] = React.useState<number | "">("");
     const [newPrice, setNewPrice] = React.useState<number | "">("");
-    const [newPlatformIds, setNewPlatformIds] = React.useState<number[]>([]);
+    const [newPlatformIds, setNewPlatformIds] = React.useState<number[]>([])
+
+    type Review = {
+        reviewerId: number;
+        reviewerFirstName: string;
+        reviewerLastName: string;
+        rating: number;
+        review: string | null;
+        timestamp: string;
+    };
 
     const [openEditDialog, setOpenEditDialog] = React.useState(false)
 
@@ -118,22 +128,20 @@ const GameListObject = (props: IGameProps) => {
     const deleteGame = (gameId: number) => {
         const token = localStorage.getItem("token");
         axios.delete(`http://localhost:4941/api/v1/games/${gameId}`, {
-                headers: {
-                    "X-Authorization": token,
-                },
+            headers: {
+                "X-Authorization": token,
+            },
+        })
+            .then(() => {
+                deleteGameFromStore(game);
+                showSnackbar("Game deleted successfully", "success");
             })
-                .then(() => {
-                    deleteGameFromStore(game);
-                    showSnackbar("Game deleted successfully", "success");
-
-                    props.onDelete?.();
-                })
-                .catch((error) => {
-                    showSnackbar("Error deleting game: " + error.toString(), "error");
-                })
-                .finally(() => {
-                    handleDeleteDialogClose();
-                });
+            .catch((error) => {
+                showSnackbar("Error deleting game: " + error.toString(), "error");
+            })
+            .finally(() => {
+                handleDeleteDialogClose();
+            });
     };
 
 
@@ -304,7 +312,7 @@ const GameListObject = (props: IGameProps) => {
                         <Button onClick={handleDeleteDialogClose}>Cancel</Button>
                         <Button variant="outlined" color="error" onClick={() => {
                             deleteGame(game.gameId)
-                            }} autoFocus>
+                        }} autoFocus>
                             Delete
                         </Button>
                     </DialogActions>
@@ -380,27 +388,41 @@ const GameListObject = (props: IGameProps) => {
                                 {props.showEditButtons && (
                                     <Button
                                         variant="outlined"
-                                        endIcon={<EditIcon/>}
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setOpenEditDialog((prev) => !prev);
                                         }}
                                     >
-                                        {openEditDialog ? "Cancel" : "Edit"}
+                                        {openEditDialog ? "Cancel" : <EditIcon/>}
                                     </Button>
 
                                 )}
 
                                 {props.showEditButtons && (
-                                    <Button variant="outlined"
-                                            endIcon={<DeleteIcon />}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setOpenDeleteDialog((prev) => !prev);
-                                            }}>
-
-                                        Delete
+                                    // TODO: test that if a game has a review then you cant delete it
+                                    <Button
+                                        variant="outlined"
+                                        color="error"
+                                        onClick={async () => {
+                                            try {
+                                                const response = await axios.get(`http://localhost:4941/api/v1/games/${game.gameId}/reviews`);
+                                                const reviews = response.data;
+                                                if (reviews.length > 0) {
+                                                    showSnackbar("Can not delete a game that has one or more reviews", "error");
+                                                    handleDeleteDialogClose();
+                                                } else {
+                                                    deleteGame(game.gameId);
+                                                }
+                                            } catch (error) {
+                                                showSnackbar("Failed to check reviews", "error");
+                                                handleDeleteDialogClose();
+                                            }
+                                        }}
+                                        autoFocus
+                                    >
+                                        <DeleteIcon/>
                                     </Button>
+
                                 )}
                             </CardActions>
                         </Box>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, {useState} from "react";
-import {Box, Card, CardContent, CardMedia, Grid, Typography} from "@mui/material";
+import {Box, Button, Card, CardContent, CardMedia, Grid, Typography} from "@mui/material";
 import {HashLink} from 'react-router-hash-link';
 import {useNavigate, useParams} from "react-router-dom";
 import CSS from "csstype";
@@ -8,12 +8,12 @@ import fallbackAvatar from "../assets/fallback-avatar.png"
 import {useGameStore} from "../store";
 import GameListObject from "./GameListObject";
 import fallbackGameLogo from "../assets/fallback-game-logo.png";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 
 const Game = () => {
     const {id} = useParams();
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(true);
 
     const [game, setGame] = React.useState<Game>({
         creationDate: "",
@@ -54,9 +54,6 @@ const Game = () => {
 
     const [errorFlag, setErrorFlag] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("");
-
-    const [dialogGame, setDialogGame] = React.useState<Game | null>(null);
-    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
 
     const [snackOpen, setSnackOpen] = React.useState(false);
     const [snackMessage, setSnackMessage] = React.useState("");
@@ -166,25 +163,6 @@ const Game = () => {
     }, [game.gameId]);
 
 
-    const handleDeleteDialogClose = () => {
-        setDialogGame(null);
-        setOpenDeleteDialog(false);
-    };
-
-    const deleteGame = () => {
-        axios.delete(`http://localhost:4941/api/v1/games/${id}`)
-            .then(() => {
-                navigate("/games");
-            })
-            .catch((error) => {
-                setErrorFlag(true);
-                setErrorMessage(error.toString());
-            })
-            .finally(() => {
-                handleDeleteDialogClose();
-            });
-    };
-
     const getGameGenres = () => {
         axios
             .get(`http://localhost:4941/api/v1/games/genres`)
@@ -211,10 +189,12 @@ const Game = () => {
             });
     };
 
+
     const getGenreNameById = (id: number) => {
         const genre = genres.find((g) => g.genreId === id);
         return genre ? genre.name : "Unknown";
     };
+
 
     const getPlatformNamesByIds = (ids: number[]): string => {
         const names = ids
@@ -222,6 +202,7 @@ const Game = () => {
             .filter((name): name is string => !!name);
         return names.length > 0 ? names.join(", ") : "Unknown";
     };
+
 
     const getGameReviews = (gameId: number) => {
         axios
@@ -267,12 +248,18 @@ const Game = () => {
     }
 
     return (
-        // TODO: this needs a back error to go back to the previously loaded page/state
         <div>
             {errorFlag && <div style={{color: "red"}}>{errorMessage}</div>}
             <Box sx={{display: 'flex', flexDirection: 'column'}}>
                 <Card sx={{...gameCardStyles}}>
                     <Box sx={{display: 'flex', flexDirection: 'row'}}>
+                        <Button
+                            variant="contained"
+                            color="inherit"
+                            onClick={() => navigate(-1)}
+                        >
+                            <ArrowBackIcon/>
+                        </Button>
                         <CardMedia
                             component="img"
                             sx={{
