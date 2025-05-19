@@ -399,11 +399,11 @@ const GameListObject = (props: IGameProps) => {
                                 )}
 
                                 {props.showEditButtons && (
-                                    // TODO: test that if a game has a review then you cant delete it
                                     <Button
                                         variant="outlined"
                                         color="error"
-                                        onClick={async () => {
+                                        onClick={async (e) => {
+                                            e.stopPropagation();
                                             try {
                                                 const response = await axios.get(`http://localhost:4941/api/v1/games/${game.gameId}/reviews`);
                                                 const reviews = response.data;
@@ -422,7 +422,6 @@ const GameListObject = (props: IGameProps) => {
                                     >
                                         <DeleteIcon/>
                                     </Button>
-
                                 )}
                             </CardActions>
                         </Box>

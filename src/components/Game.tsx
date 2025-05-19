@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, {useState} from "react";
+import React from "react";
 import {Box, Button, Card, CardContent, CardMedia, Grid, Typography} from "@mui/material";
 import {HashLink} from 'react-router-hash-link';
 import {useNavigate, useParams} from "react-router-dom";
@@ -9,6 +9,8 @@ import {useGameStore} from "../store";
 import GameListObject from "./GameListObject";
 import fallbackGameLogo from "../assets/fallback-game-logo.png";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ReviewForm from "./ReviewForm";
+import WishlistButton from "./WishlistButton";
 
 
 const Game = () => {
@@ -64,6 +66,19 @@ const Game = () => {
 
     const games = useGameStore(state => state.games);
     const setGames = useGameStore(state => state.setGames);
+
+    const [ownedGames, setOwnedGames] = React.useState<Game[]>([]);
+
+    React.useEffect(() => {
+        const getOwnedGames = () => {
+            axios.get(`http://localhost:4941/api/v1/games?ownedByMe=true`)
+                .then((response) => {
+                    setOwnedGames(response.data.games);
+                }, (error) => {
+                });
+        };
+        getOwnedGames();
+    }, [setOwnedGames]);
 
     const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
         setSnackMessage(message);
@@ -247,6 +262,7 @@ const Game = () => {
         padding: "0px",
     }
 
+
     return (
         <div>
             {errorFlag && <div style={{color: "red"}}>{errorMessage}</div>}
@@ -334,6 +350,17 @@ const Game = () => {
                                     All Reviews
                                 </HashLink>
                             </Typography>
+
+                            <Typography variant="body2" color="inherit" noWrap>
+                                &nbsp;
+                            </Typography>
+
+                            <WishlistButton
+                                gameId={game.gameId}
+                                creatorId={game.creatorId}
+                                isOwned={ownedGames.some(g => g.gameId === game.gameId)}
+                            />
+
                         </CardContent>
                     </Box>
                 </Card>
@@ -369,6 +396,21 @@ const Game = () => {
                                 flex: 1,
                             }}
                         >
+                            <ReviewForm
+                                gameId={game.gameId}
+                                gameTitle={game.title}
+                                creatorId={game.creatorId}
+                                currentUser={{
+                                    id: Number(localStorage.getItem("userId")),
+                                    isAuthenticated: !!localStorage.getItem("token")
+                                }}
+                                onReviewSubmitted={() => getGameReviews(game.gameId)}
+                            />
+
+                            <Typography variant="body2" color="inherit" noWrap>
+                                &nbsp;
+                            </Typography>
+
                             <Typography variant="h6" id="all-reviews">
                                 Reviews ({reviews.length})
                             </Typography>

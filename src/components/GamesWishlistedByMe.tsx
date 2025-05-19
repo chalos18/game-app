@@ -11,7 +11,11 @@ const GamesWishlistedByMe = () => {
 
     React.useEffect(() => {
         const getWishlistedGames = () => {
-            axios.get(`http://localhost:4941/api/v1/games?wishlistedByMe=true`)
+            axios.get(`http://localhost:4941/api/v1/games?wishlistedByMe=true`, {
+                headers: {
+                    "X-Authorization": localStorage.getItem("token")
+                },
+            })
                 .then((response) => {
                     setWishlistedGames(response.data.games);
                 }, (error) => {

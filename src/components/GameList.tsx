@@ -23,7 +23,6 @@ const GameList = () => {
             if (searchTerm) params.append("q", searchTerm);
             axios.get(`http://localhost:4941/api/v1/games?${params.toString()}`)
                 .then((response) => {
-                    console.log(response.data.games);
                     setErrorFlag(false);
                     setErrorMessage("");
                     setGames(response.data.games);

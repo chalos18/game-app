@@ -20,15 +20,15 @@ const MyGames = () => {
     const renderSection = () => {
         switch (selectedSection) {
             case "createGames":
-                return <CreateGame />;
+                return <CreateGame/>;
             case "owned":
-                return <GamesOwnedByMe />;
+                return <GamesOwnedByMe/>;
             case "wishlisted":
-                return <GamesWishlistedByMe />;
+                return <GamesWishlistedByMe/>;
             case "created":
-                return <GamesCreatedByMe />;
+                return <GamesCreatedByMe/>;
             case "reviewed":
-                return <GamesReviewedByMe />;
+                return <GamesReviewedByMe/>;
             default:
                 return null;
         }
@@ -46,11 +46,11 @@ const MyGames = () => {
                         variant="scrollable"
                         scrollButtons="auto"
                     >
-                        <Tab label="Create Game" value="createGames" />
-                        <Tab label="Owned Games" value="owned" />
-                        <Tab label="Wishlisted Games" value="wishlisted" />
-                        <Tab label="Created Games" value="created" />
-                        <Tab label="Reviewed Games" value="reviewed" />
+                        <Tab label="Create Game" value="createGames"/>
+                        <Tab label="Owned Games" value="owned"/>
+                        <Tab label="Wishlisted Games" value="wishlisted"/>
+                        <Tab label="Created Games" value="created"/>
+                        <Tab label="Reviewed Games" value="reviewed"/>
                     </Tabs>
                 </Box>
                 <Box>
