@@ -218,7 +218,7 @@ const CreateGame = () => {
 
     return (
         // sx = {{backgroundColor: "#406262"}}
-        <Paper elevation={3} style={card} sx = {{backgroundColor: "white"}}>
+        <Paper elevation={3} style={card} sx={{backgroundColor: "white"}}>
             <Snackbar
                 open={snackOpen}
                 autoHideDuration={5000}
@@ -251,7 +251,7 @@ const CreateGame = () => {
                     helperText={fieldErrors.description || `${newDescription.length}/1024 characters`}
                 />
 
-                <FormControl fullWidth error={!!fieldErrors.genreId} sx={{ textAlign: 'left', alignItems: 'flex-start' }}>
+                <FormControl fullWidth error={!!fieldErrors.genreId} sx={{textAlign: 'left', alignItems: 'flex-start'}}>
                     <InputLabel id="genre-select-label">Genre *</InputLabel>
                     <Select<number | "">
                         labelId="genre-select-label"
@@ -280,7 +280,7 @@ const CreateGame = () => {
 
 
                     {fieldErrors.genreId && (
-                        <Typography variant="caption" color="error" sx={{ pl: '14px' }}>
+                        <Typography variant="caption" color="error" sx={{pl: '14px'}}>
                             {fieldErrors.genreId}
                         </Typography>
                     )}
@@ -321,7 +321,7 @@ const CreateGame = () => {
                         ))}
                     </Stack>
                     {fieldErrors.platformIds && (
-                        <Typography variant="caption" color="error" sx={{ pl: '14px' }}>
+                        <Typography variant="caption" color="error" sx={{pl: '14px'}}>
                             {fieldErrors.platformIds}
                         </Typography>
                     )}

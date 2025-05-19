@@ -1,8 +1,20 @@
 import {
-    Alert, Button, Checkbox, FormControl,
-    FormControlLabel, FormGroup, FormHelperText, InputLabel, MenuItem, Paper, Select, Snackbar, Stack, TextField
+    Alert,
+    Button,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    FormHelperText,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Select,
+    Snackbar,
+    Stack,
+    TextField
 } from "@mui/material";
-import { useState } from "react";
+import {useState} from "react";
 
 interface GameEditFormProps {
     game: Game;
@@ -18,7 +30,7 @@ interface GameEditFormProps {
     onCancel: () => void;
 }
 
-const GameEditForm = ({ game, genres, platforms, onUpdate, onCancel }: GameEditFormProps) => {
+const GameEditForm = ({game, genres, platforms, onUpdate, onCancel}: GameEditFormProps) => {
     const [newTitle, setNewTitle] = useState(game.title ?? "");
     const [newDescription, setNewDescription] = useState(game.description ?? "");
     const [newGenreId, setNewGenreId] = useState<number | "">(game.genreId ?? "");
@@ -89,15 +101,15 @@ const GameEditForm = ({ game, genres, platforms, onUpdate, onCancel }: GameEditF
     };
 
     return (
-        <Paper elevation={3} sx={{ backgroundColor: "white", p: 3, m: 2 }} component="form" onSubmit={handleSubmit}>
+        <Paper elevation={3} sx={{backgroundColor: "white", p: 3, m: 2}} component="form" onSubmit={handleSubmit}>
             <Snackbar
                 open={snackOpen}
                 autoHideDuration={3000}
                 onClose={handleSnackClose}
-                anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                style={{ zIndex: 9999 }}
+                anchorOrigin={{vertical: "top", horizontal: "right"}}
+                style={{zIndex: 9999}}
             >
-                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{ width: "100%" }}>
+                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{width: "100%"}}>
                     {snackMessage}
                 </Alert>
             </Snackbar>
@@ -160,7 +172,7 @@ const GameEditForm = ({ game, genres, platforms, onUpdate, onCancel }: GameEditF
                     onChange={(e) => setNewPrice(e.target.value === "" ? "" : parseFloat(e.target.value))}
                     error={!!fieldErrors.price}
                     helperText={fieldErrors.price}
-                    inputProps={{ step: 1 }}
+                    inputProps={{step: 1}}
                 />
 
                 <FormControl component="fieldset" error={!!fieldErrors.platformIds}>

@@ -1,8 +1,8 @@
 import * as React from 'react';
+import {useRef, useState} from 'react';
 import axios from "axios";
 import {Container, Paper, Typography} from "@mui/material";
 import GameListObject from "./GameListObject";
-import {useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 
@@ -90,7 +90,7 @@ const GamesCreatedByMe = () => {
                     <Container sx={{mt: 8}}>
                         {createdGames.map((game: Game) => {
                             console.log("Game Description:", game.description);
-                            return <GameListObject key={game.gameId} game={game} showEditButtons={true} />;
+                            return <GameListObject key={game.gameId} game={game} showEditButtons={true}/>;
                         })}
 
                     </Container>

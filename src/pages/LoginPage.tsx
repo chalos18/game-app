@@ -17,7 +17,7 @@ const LoginPage = () => {
                     Welcome
                 </Typography>
                 <Tabs value={tabIndex} onChange={handleTabChange} centered>
-                    <Tab label="Log in" />
+                    <Tab label="Log in"/>
                     <Tab label="Register" />
                 </Tabs>
                 <Box sx={{ mt: 3 }}>

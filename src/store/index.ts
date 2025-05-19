@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import {create} from 'zustand';
 
 interface GameState {
     games: Game[];
@@ -6,7 +6,7 @@ interface GameState {
     setGames: (games: Array<Game>) => void;
     setGame: (game: Game) => void;
     removeGame: (game: Game) => void;
-    editGame: (game: Game, newTitle: string, newDescription:string, newGenreID: number | "", newPrice: number | "", newPlatformIds: number[]) => void;
+    editGame: (game: Game, newTitle: string, newDescription: string, newGenreID: number | "", newPrice: number | "", newPlatformIds: number[]) => void;
 }
 
 const getLocalStorage = (key: string): Game[] =>
@@ -29,7 +29,13 @@ const useStore = create<GameState>((set) => ({
     editGame: (game: Game, newTitle, newDescription, newGenreID, newPrice, newPlatformIds) => set((state) => {
         return {
             games: state.games.map(g => g.gameId === game.gameId ?
-            ({ ...g, title: newTitle, description: newDescription, genreId: newGenreID, platformIds: newPlatformIds } as Game) : g)
+                ({
+                    ...g,
+                    title: newTitle,
+                    description: newDescription,
+                    genreId: newGenreID,
+                    platformIds: newPlatformIds
+                } as Game) : g)
         }
     }),
     removeGame: (game: Game) => set((state) => {

@@ -7,9 +7,10 @@ import {
     Card,
     CardActions,
     CardContent,
-    CardMedia, Dialog, DialogContent,
+    CardMedia,
+    Dialog,
+    DialogContent,
     DialogTitle,
-    IconButton,
     Typography
 } from "@mui/material";
 import CSS from 'csstype';
@@ -216,8 +217,8 @@ const GameListObject = (props: IGameProps) => {
     const updateGame = (
         newTitle: string,
         newDescription: string,
-        newGenreId: number|"",
-        newPrice: number|"",
+        newGenreId: number | "",
+        newPrice: number | "",
         newPlatformIds: number[]
     ) => {
         const errors: { [key: string]: string } = {};
@@ -304,7 +305,7 @@ const GameListObject = (props: IGameProps) => {
                         game={game}
                         genres={genres}
                         platforms={platforms}
-                        onUpdate={({ newTitle, newDescription, newGenreId, newPrice, newPlatformIds }) => {
+                        onUpdate={({newTitle, newDescription, newGenreId, newPrice, newPlatformIds}) => {
                             updateGame(newTitle, newDescription, newGenreId, newPrice, newPlatformIds);
                             setOpenEditDialog(false);
                         }}
@@ -383,7 +384,7 @@ const GameListObject = (props: IGameProps) => {
                             {props.showEditButtons && (
                                 <Button
                                     variant="outlined"
-                                    endIcon={<EditIcon />}
+                                    endIcon={<EditIcon/>}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setOpenEditDialog((prev) => !prev);
