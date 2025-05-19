@@ -1,6 +1,6 @@
 import * as React from 'react';
 import axios from "axios";
-import {Container, Paper, Typography} from "@mui/material";
+import {Container, Paper} from "@mui/material";
 import GameListObject from "./GameListObject";
 
 const GamesReviewedByMe = () => {

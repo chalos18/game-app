@@ -9,9 +9,10 @@ import {
     CardActions,
     CardContent,
     CardMedia,
-    Dialog,
-    DialogContent,
-    DialogTitle, Snackbar,
+    Dialog, DialogActions,
+    DialogContent, DialogContentText,
+    DialogTitle,
+    Snackbar,
     Typography
 } from "@mui/material";
 import CSS from 'csstype';
@@ -21,10 +22,12 @@ import fallbackGameLogo from "../assets/fallback-game-logo.png";
 import {useGameStore} from "../store";
 import EditIcon from "@mui/icons-material/Edit";
 import GameEditForm from "./GameEditForm";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface IGameProps {
     game: Game,
     showEditButtons?: boolean,
+    onDelete?: () => void,
 }
 
 const GameListObject = (props: IGameProps) => {
@@ -37,11 +40,6 @@ const GameListObject = (props: IGameProps) => {
     const [imgError, setImgError] = useState(false)
 
     const navigate = useNavigate();
-
-    const [errorFlag, setErrorFlag] = React.useState(false);
-    const [errorMessage, setErrorMessage] = React.useState("");
-
-    // const [dialogGame, setDialogGame] = React.useState<Game | null>(null);
 
     const [genres, setGenres] = React.useState<{ genreId: number, name: string }[]>([]);
     const [platforms, setPlatforms] = React.useState<{ platformId: number, name: string }[]>([]);
@@ -60,6 +58,8 @@ const GameListObject = (props: IGameProps) => {
 
     const [openEditDialog, setOpenEditDialog] = React.useState(false)
 
+    const deleteGameFromStore = useGameStore(state => state.removeGame)
+    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
 
     const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
         setSnackMessage(message);
@@ -71,13 +71,14 @@ const GameListObject = (props: IGameProps) => {
         setOpenEditDialog(false);
     };
 
+    const handleDeleteDialogClose = () => {
+        setOpenDeleteDialog(false);
+    };
+
     const handleSnackClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === "clickaway") return;
         setSnackOpen(false);
     };
-
-    // const deleteGameFromStore = useGameStore(state => state.removeGame)
-    // const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
 
 
     React.useEffect(() => {
@@ -114,37 +115,27 @@ const GameListObject = (props: IGameProps) => {
     }, [game.gameId]);
 
 
-    // const handleDeleteDialogOpen = (game: Game) => {
-    //     setDialogGame(game);
-    //     setOpenDeleteDialog(true);
-    // };
-    //
-    // const handleDeleteDialogClose = () => {
-    //     setDialogGame(null);
-    //     setOpenDeleteDialog(false);
-    // };
-    //
-    //
-    // const handleSnackClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
-    //     if (reason === "clickaway") return;
-    //     setSnackOpen(false);
-    // };
+    const deleteGame = (gameId: number) => {
+        const token = localStorage.getItem("token");
+        axios.delete(`http://localhost:4941/api/v1/games/${gameId}`, {
+                headers: {
+                    "X-Authorization": token,
+                },
+            })
+                .then(() => {
+                    deleteGameFromStore(game);
+                    showSnackbar("Game deleted successfully", "success");
 
-    // const deleteGame = (gameId: number) => {
-    //     axios
-    //         .delete(`http://localhost:4941/api/v1/games/${gameId}`)
-    //         .then(() => {
-    //             deleteGameFromStore(game)
-    //             showSnackbar("Game deleted successfully", "success");
-    //         })
-    //         .catch((error) => {
-    //             showSnackbar("Error deleting game: " + error.toString(), "error");
-    //         })
-    //         .finally(() => {
-    //             handleDeleteDialogClose();
-    //         });
-    // };
-    //
+                    props.onDelete?.();
+                })
+                .catch((error) => {
+                    showSnackbar("Error deleting game: " + error.toString(), "error");
+                })
+                .finally(() => {
+                    handleDeleteDialogClose();
+                });
+    };
+
 
     const getGameGenres = () => {
         axios
@@ -245,8 +236,6 @@ const GameListObject = (props: IGameProps) => {
     const getGame = () => {
         axios.get(`http://localhost:4941/api/v1/games/${game.gameId}`)
             .then((response) => {
-                setErrorFlag(false);
-                setErrorMessage("");
                 game.description = response.data.description;
             })
             .catch((error) => {
@@ -296,6 +285,29 @@ const GameListObject = (props: IGameProps) => {
                             onCancel={() => handleEditDialogClose()}
                         />
                     </DialogContent>
+                </Dialog>
+
+                <Dialog
+                    open={openDeleteDialog}
+                    onClose={handleDeleteDialogClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description">
+                    <DialogTitle id="alert-dialog-title">
+                        {"Delete Game?"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Are you sure you want to delete this game?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleDeleteDialogClose}>Cancel</Button>
+                        <Button variant="outlined" color="error" onClick={() => {
+                            deleteGame(game.gameId)
+                            }} autoFocus>
+                            Delete
+                        </Button>
+                    </DialogActions>
                 </Dialog>
 
                 <Box onClick={() => navigate(`/games/${game.gameId}`)}>
@@ -377,6 +389,18 @@ const GameListObject = (props: IGameProps) => {
                                         {openEditDialog ? "Cancel" : "Edit"}
                                     </Button>
 
+                                )}
+
+                                {props.showEditButtons && (
+                                    <Button variant="outlined"
+                                            endIcon={<DeleteIcon />}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setOpenDeleteDialog((prev) => !prev);
+                                            }}>
+
+                                        Delete
+                                    </Button>
                                 )}
                             </CardActions>
                         </Box>
