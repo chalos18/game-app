@@ -146,10 +146,9 @@ const CreateGame = () => {
 
         if (!newTitle.trim()) errors.title = "Title is required";
         if (!newDescription.trim()) errors.description = "Description is required";
-        if (newGenreId === "") errors.genreId = "Genre ID is required";
+        if (newGenreId === "") errors.genreId = "Genre is required";
         if (newPrice === "") errors.price = "Price is required";
-        console.log(newPlatformIds)
-        if (newPlatformIds.length === 0) errors.platformIds = "Platform IDs are required";
+        if (newPlatformIds.length === 0) errors.platformIds = "One or more platforms required";
 
         if (Object.keys(errors).length > 0) {
             setFieldErrors(errors);
@@ -218,7 +217,8 @@ const CreateGame = () => {
     };
 
     return (
-        <Paper elevation={3} style={card}>
+        // sx = {{backgroundColor: "#406262"}}
+        <Paper elevation={3} style={card} sx = {{backgroundColor: "white"}}>
             <Snackbar
                 open={snackOpen}
                 autoHideDuration={5000}
@@ -236,6 +236,7 @@ const CreateGame = () => {
                 <TextField
                     label="Title"
                     value={newTitle}
+                    required
                     onChange={(e) => setNewTitle(e.target.value)}
                     error={!!fieldErrors.title}
                     helperText={fieldErrors.title || `${newTitle.length}/128 characters`}
@@ -244,19 +245,30 @@ const CreateGame = () => {
                 <TextField
                     label="Description"
                     value={newDescription}
+                    required
                     onChange={(e) => setNewDescription(e.target.value)}
                     error={!!fieldErrors.description}
                     helperText={fieldErrors.description || `${newDescription.length}/1024 characters`}
                 />
 
-                <FormControl fullWidth error={!!fieldErrors.genreId}>
-                    <InputLabel id="genre-select-label">Genre</InputLabel>
+                <FormControl fullWidth error={!!fieldErrors.genreId} sx={{ textAlign: 'left', alignItems: 'flex-start' }}>
+                    <InputLabel id="genre-select-label">Genre *</InputLabel>
                     <Select<number | "">
                         labelId="genre-select-label"
                         id="genre-select"
                         value={newGenreId}
+                        fullWidth
+                        required
                         label="Genre"
                         onChange={(e) => setNewGenreId(e.target.value)}
+                        MenuProps={{
+                            PaperProps: {
+                                style: {
+                                    maxHeight: 200,
+                                    overflowY: 'auto',
+                                },
+                            },
+                        }}
                     >
                         <MenuItem value="">None</MenuItem>
                         {genres.map((genre) => (
@@ -266,8 +278,9 @@ const CreateGame = () => {
                         ))}
                     </Select>
 
+
                     {fieldErrors.genreId && (
-                        <Typography variant="caption" color="error">
+                        <Typography variant="caption" color="error" sx={{ pl: '14px' }}>
                             {fieldErrors.genreId}
                         </Typography>
                     )}
@@ -276,6 +289,7 @@ const CreateGame = () => {
                 <TextField
                     label="Price"
                     type="number"
+                    required
                     value={newPrice}
                     onChange={(e) => setNewPrice(e.target.value === "" ? "" : parseFloat(e.target.value))}
                     error={!!fieldErrors.price}
@@ -283,8 +297,8 @@ const CreateGame = () => {
                     slotProps={{htmlInput: {step: 1}}}
                 />
 
+                <InputLabel id="platforms-select-label">Platforms *</InputLabel>
                 <FormControl component="fieldset" error={!!fieldErrors.platformIds}>
-                    <Typography variant="subtitle1"></Typography>
                     <Stack direction="row" flexWrap="wrap" spacing={1}>
                         {platforms.map((platform) => (
                             <FormControlLabel
@@ -307,7 +321,7 @@ const CreateGame = () => {
                         ))}
                     </Stack>
                     {fieldErrors.platformIds && (
-                        <Typography variant="caption" color="error">
+                        <Typography variant="caption" color="error" sx={{ pl: '14px' }}>
                             {fieldErrors.platformIds}
                         </Typography>
                     )}

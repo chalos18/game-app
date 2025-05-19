@@ -6,7 +6,7 @@ interface GameState {
     setGames: (games: Array<Game>) => void;
     setGame: (game: Game) => void;
     removeGame: (game: Game) => void;
-    // editGame: (game: Game, newTitle: string) => void;
+    editGame: (game: Game, newTitle: string, newDescription:string, newGenreID: number | "", newPrice: number | "", newPlatformIds: number[]) => void;
 }
 
 const getLocalStorage = (key: string): Game[] =>
@@ -26,12 +26,12 @@ const useStore = create<GameState>((set) => ({
     setGame: (game: Game) => set(() => ({
         game
     })),
-    // editGame: (game: Game, newTitle) => set((state) => {
-    //     const temp = state.games.map(u => g.gameId === game.gameId ?
-    //         ({...g, title: newTitle} as Game): g)
-    //     setLocalStorage('games', temp)
-    //     return {games: temp}
-    // }),
+    editGame: (game: Game, newTitle, newDescription, newGenreID, newPrice, newPlatformIds) => set((state) => {
+        return {
+            games: state.games.map(g => g.gameId === game.gameId ?
+            ({ ...g, title: newTitle, description: newDescription, genreId: newGenreID, platformIds: newPlatformIds } as Game) : g)
+        }
+    }),
     removeGame: (game: Game) => set((state) => {
         setLocalStorage('games', state.games.filter(u => u.gameId !==
             game.gameId))

@@ -102,7 +102,7 @@ function Navbar() {
                 <Box sx={{display: 'flex', gap: 2, alignItems: 'center'}}>
                     <Button sx={{color: 'white'}} component={Link} to="/home">Games</Button>
                     {!isLoggedIn ? (
-                        <Button sx={{color: 'white'}} component={Link} to="/login">Login</Button>
+                        <Button sx={{color: 'white'}} component={Link} to="/login">Log in</Button>
                     ) : (
                         <>
                             <IconButton

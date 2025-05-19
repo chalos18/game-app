@@ -7,7 +7,7 @@ import {
     IconButton,
     InputAdornment,
     Paper,
-    Snackbar,
+    Snackbar, Stack,
     TextField,
     Typography,
 } from '@mui/material';
@@ -33,6 +33,9 @@ const LoginForm: React.FC = () => {
     const [authDetails, setAuthDetails] = useState('');
 
     const navigate = useNavigate();
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -129,51 +132,53 @@ const LoginForm: React.FC = () => {
 
             <Paper elevation={3} sx={{padding: 4}}>
                 <Typography variant="h4" align="center" gutterBottom>
-                    Sign In
+                    Log in
                 </Typography>
                 <Box component="form" onSubmit={(e) => {
                     e.preventDefault();
                     handleLogin();
                 }} noValidate>
-                    <TextField
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                        required={true}
-                        value={email}
-                        onChange={(e) => {
-                            setEmail(e.target.value);
-                            setFieldErrors(prev => ({...prev, email: ''}));  // Clear error on change
-                        }}
-                        error={!!fieldErrors.email}
-                        helperText={fieldErrors.email}
-                    />
-                    <TextField
-                        label="Password"
-                        type={showPassword ? "text" : "password"}
-                        fullWidth
-                        value={password}
-                        required={true}
-                        onChange={(e) => {
-                            setPassword(e.target.value);
-                            setFieldErrors(prev => ({...prev, password: ''}));
-                        }}
-                        error={!!fieldErrors.password}
-                        helperText={fieldErrors.password}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        edge="end"
-                                    >
-                                        {showPassword ? <VisibilityOff/> : <Visibility/>}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
+                    <Stack spacing={2}>
+                        <TextField
+                            label="Email Address"
+                            type="email"
+                            fullWidth
+                            required={true}
+                            value={email}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                setFieldErrors(prev => ({...prev, email: ''}));  // Clear error on change
+                            }}
+                            error={!!fieldErrors.email}
+                            helperText={fieldErrors.email}
+                        />
+                        <TextField
+                            label="Password"
+                            type={showPassword ? "text" : "password"}
+                            fullWidth
+                            value={password}
+                            required={true}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                setFieldErrors(prev => ({...prev, password: ''}));
+                            }}
+                            error={!!fieldErrors.password}
+                            helperText={fieldErrors.password}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff/> : <Visibility/>}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    </Stack>
                     <Button
                         type="submit"
                         fullWidth
@@ -181,7 +186,7 @@ const LoginForm: React.FC = () => {
                         color="primary"
                         sx={{mt: 3}}
                     >
-                        Log In
+                        Log in
                     </Button>
                 </Box>
             </Paper>

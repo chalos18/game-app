@@ -267,6 +267,7 @@ const Game = () => {
     }
 
     return (
+        // TODO: this needs a back error to go back to the previously loaded page/state
         <div>
             {errorFlag && <div style={{color: "red"}}>{errorMessage}</div>}
             <Box sx={{display: 'flex', flexDirection: 'column'}}>

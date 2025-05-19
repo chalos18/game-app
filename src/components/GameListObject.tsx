@@ -1,18 +1,34 @@
 import React, {useState} from "react";
 import axios from "axios";
 // import dayjs from "dayjs";
-import {Box, Card, CardContent, CardMedia, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    CardMedia, Dialog, DialogContent,
+    DialogTitle,
+    IconButton,
+    Typography
+} from "@mui/material";
 import CSS from 'csstype';
 import {useNavigate} from "react-router-dom";
 import fallbackAvatar from "../assets/fallback-avatar.png";
 import fallbackGameLogo from "../assets/fallback-game-logo.png";
+import {useGameStore} from "../store";
+import EditIcon from "@mui/icons-material/Edit";
+import GameEditForm from "./GameEditForm";
 
 interface IGameProps {
-    game: Game
+    game: Game,
+    showEditButtons?: boolean,
 }
 
 const GameListObject = (props: IGameProps) => {
-    const [game] = React.useState<Game>(props.game)
+    const [game, setGame] = React.useState<Game>(props.game)
+
+    const editGameFromStore = useGameStore(state => state.editGame)
 
     const [imageUrl, setImageUrl] = React.useState<string | null>(null);
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
@@ -23,6 +39,8 @@ const GameListObject = (props: IGameProps) => {
     const [errorFlag, setErrorFlag] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("");
 
+    const [gameDescription, setGameDescription] = React.useState("");
+
     // const [dialogGame, setDialogGame] = React.useState<Game | null>(null);
 
     const [genres, setGenres] = React.useState<{ genreId: number, name: string }[]>([]);
@@ -32,11 +50,54 @@ const GameListObject = (props: IGameProps) => {
     const [snackMessage, setSnackMessage] = React.useState("");
     const [snackSeverity, setSnackSeverity] = React.useState<"success" | "error" | "warning">("success");
 
+    const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+
+    const [newTitle, setNewTitle] = React.useState("");
+    const [newDescription, setNewDescription] = React.useState("");
+    const [newGenreId, setNewGenreId] = React.useState<number | "">("");
+    const [newPrice, setNewPrice] = React.useState<number | "">("");
+    const [newPlatformIds, setNewPlatformIds] = React.useState<number[]>([]);
+
+    const [openEditDialog, setOpenEditDialog] = React.useState(false)
+
+    const parseValidationError = (message: string): { [key: string]: string } => {
+        const rules: { [key: string]: [string, string] } = {
+            "data/genreId must be >= 0": ["genreId", "Genre ID must be non-negative"],
+            "No genre with id": ["genreId", "Genre ID must reference an existing genre"],
+            "data/platformIds must be array": ["platformIds", "Platform IDs must be comma-separated"],
+            "data/price must be integer": ["price", "Price must be a number"],
+            "data/price must be >= 0": ["price", "Price must be non-negative"],
+            "Duplicate petition": ["title", "Game already exists"],
+            "No platform with id": ["platformIds", "Platform ID must reference an existing platform"],
+            "data/platformIds must NOT have fewer than 1 items": ["platformIds", "Game must have at least one Platform"],
+        };
+
+        const result: { [key: string]: string } = {};
+
+        const parts = message.split(/[,;]+/).map(part => part.trim());
+
+        for (const part of parts) {
+            for (const key in rules) {
+                if (part.includes(key)) {
+                    const [field, text] = rules[key];
+                    result[field] = text;
+                }
+            }
+        }
+
+        return result;
+    };
+
     const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
         setSnackMessage(message);
         setSnackSeverity(severity);
         setSnackOpen(true);
     };
+
+    const handleEditDialogClose = () => {
+        setOpenEditDialog(false);
+    };
+
     // const deleteGameFromStore = useGameStore(state => state.removeGame)
     //
     // const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
@@ -137,6 +198,7 @@ const GameListObject = (props: IGameProps) => {
     React.useEffect(() => {
         getGameGenres();
         getGamePlatforms();
+        getGame();
     }, []);
 
     const getGenreNameById = (id: number) => {
@@ -150,6 +212,75 @@ const GameListObject = (props: IGameProps) => {
             .filter((name): name is string => !!name);
         return names.length > 0 ? names.join(", ") : "Unknown";
     };
+
+    const updateGame = (
+        newTitle: string,
+        newDescription: string,
+        newGenreId: number|"",
+        newPrice: number|"",
+        newPlatformIds: number[]
+    ) => {
+        const errors: { [key: string]: string } = {};
+
+        if (!newTitle.trim()) errors.title = "Title is required";
+        if (!newDescription.trim()) errors.description = "Description is required";
+        if (newGenreId === "") errors.genreId = "Genre is required";
+        if (newPrice === "") errors.price = "Price is required";
+        if (newPlatformIds.length === 0) errors.platformIds = "One or more platforms required";
+
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
+            showSnackbar("Please fix the highlighted fields", "warning");
+            return;
+        }
+        const token = localStorage.getItem("token");
+        axios
+            .patch(`http://localhost:4941/api/v1/games/${game.gameId}`, {
+                title: newTitle,
+                description: newDescription,
+                genreId: Number(newGenreId),
+                price: Number(newPrice),
+                platformIds: newPlatformIds,
+            }, {
+                headers: {
+                    "X-Authorization": token,
+                },
+            })
+            .then(() => {
+                const updatedGame = {
+                    ...game,
+                    title: newTitle,
+                    description: newDescription,
+                    genreId: Number(newGenreId),
+                    price: Number(newPrice),
+                    platformIds: newPlatformIds,
+                };
+                setGame(updatedGame);
+
+                editGameFromStore(game, newTitle, newDescription, newGenreId, newPrice, newPlatformIds);
+                showSnackbar("Game updated successfully", "success");
+
+                setNewTitle("");
+                setNewDescription("");
+                setNewGenreId("");
+                setNewPrice("");
+                setNewPlatformIds([]);
+                setFieldErrors({});
+            })
+    }
+
+    const getGame = () => {
+        axios.get(`http://localhost:4941/api/v1/games/${game.gameId}`)
+            .then((response) => {
+                setErrorFlag(false);
+                setErrorMessage("");
+                game.description = response.data.description;
+            })
+            .catch((error) => {
+                setErrorFlag(true);
+                setErrorMessage(error.toString());
+            });
+    }
 
 
     const gameCardStyles: CSS.Properties = {
@@ -165,9 +296,23 @@ const GameListObject = (props: IGameProps) => {
             cursor: 'pointer',
             '&:hover': {boxShadow: 6, transform: 'scale(1.02)'},
             transition: 'all 0.2s ease-in-out',
-            // backgroundColor: "#406262",
-            // color: "white",
         }}>
+            <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)} fullWidth maxWidth="sm">
+                <DialogTitle>Edit Game</DialogTitle>
+                <DialogContent>
+                    <GameEditForm
+                        game={game}
+                        genres={genres}
+                        platforms={platforms}
+                        onUpdate={({ newTitle, newDescription, newGenreId, newPrice, newPlatformIds }) => {
+                            updateGame(newTitle, newDescription, newGenreId, newPrice, newPlatformIds);
+                            setOpenEditDialog(false);
+                        }}
+                        onCancel={() => handleEditDialogClose()}
+                    />
+                </DialogContent>
+            </Dialog>
+
             <Box onClick={() => navigate(`/games/${game.gameId}`)}>
                 <CardMedia
                     component="img"
@@ -182,9 +327,8 @@ const GameListObject = (props: IGameProps) => {
                     sx={{
                         display: "flex",
                         flexDirection: "column",
-                        // justifyContent: "space-between",
                         height: "calc(500px - 300px)",
-                        overflow: "hidden"
+                        overflowY: openEditDialog ? "auto" : "hidden"
                     }}
                 >
                     <Box>
@@ -234,9 +378,24 @@ const GameListObject = (props: IGameProps) => {
                         <Typography variant="body2" noWrap>
                             {game.creatorFirstName} {game.creatorLastName}
                         </Typography>
+
+                        <CardActions>
+                            {props.showEditButtons && (
+                                <Button
+                                    variant="outlined"
+                                    endIcon={<EditIcon />}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenEditDialog((prev) => !prev);
+                                    }}
+                                >
+                                    {openEditDialog ? "Cancel" : "Edit"}
+                                </Button>
+
+                            )}
+                        </CardActions>
                     </Box>
                 </CardContent>
-
             </Box>
         </Card>
     )

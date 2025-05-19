@@ -8,7 +8,7 @@ import GamesOwnedByMe from "../components/GamesOwnedByMe";
 import CreateGame from "../components/CreateGame";
 
 const MyGames = () => {
-    const [selectedSection, setSelectedSection] = React.useState("owned");
+    const [selectedSection, setSelectedSection] = React.useState("createGames");
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         setSelectedSection(newValue);

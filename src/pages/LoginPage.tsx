@@ -11,18 +11,16 @@ const LoginPage = () => {
     };
 
     return (
-        // TODO: logout the user if the react project is shut down
         <Container maxWidth="sm" sx={{ mt: 6 }}>
             <Paper elevation={3} sx={{ p: 4 }}>
                 <Typography variant="h4" align="center" gutterBottom>
                     Welcome
                 </Typography>
                 <Tabs value={tabIndex} onChange={handleTabChange} centered>
-                    <Tab label="Login" />
+                    <Tab label="Log in" />
                     <Tab label="Register" />
                 </Tabs>
                 <Box sx={{ mt: 3 }}>
-                    {/* TODO: add field text limits for both of the below, e.g a password cant be n digits long*/}
                     {tabIndex === 0 ? <LoginForm /> : <RegisterForm />}
                 </Box>
             </Paper>
