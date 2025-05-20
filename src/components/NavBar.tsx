@@ -13,7 +13,6 @@ function Navbar() {
     const [snackMessage, setSnackMessage] = React.useState("");
     const [snackSeverity, setSnackSeverity] = React.useState<"success" | "error" | "warning">("success");
 
-    const [imageUrl, setImageUrl] = React.useState<string | null>(null);
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
 
     const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {

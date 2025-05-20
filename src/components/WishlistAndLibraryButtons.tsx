@@ -112,8 +112,6 @@ const WishlistAndLibraryButtons: React.FC<WishlistButtonProps> = ({gameId, creat
     }, [userId, token, gameId]);
 
 
-
-
     useEffect(() => {
         const handleStorageChange = () => {
             const storedWishlist = localStorage.getItem("wishlistGames");
@@ -378,7 +376,6 @@ const WishlistAndLibraryButtons: React.FC<WishlistButtonProps> = ({gameId, creat
                 setLoading(false);
             });
     };
-
 
 
     if (userId === creatorId || isOwned) {

@@ -13,3 +13,9 @@ type Game = {
     numberOfWishlists: number;
     numberOfOwners: number;
 }
+
+type User = {
+    firstName: string,
+    lastName: string,
+    email: string,
+}

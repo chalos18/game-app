@@ -2,7 +2,6 @@ import * as React from 'react';
 import axios from "axios";
 import {Container, Paper} from "@mui/material";
 import GameListObject from "./GameListObject";
-import Box from '@mui/material/Box';
 
 
 const GamesWishlistedByMe = () => {

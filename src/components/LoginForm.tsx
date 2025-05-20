@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import axios from "axios";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
-import {useNavigate} from 'react-router-dom'; // assuming you're using react-router
+import {useNavigate} from 'react-router-dom';
 
 
 const LoginForm: React.FC = () => {
@@ -22,20 +22,13 @@ const LoginForm: React.FC = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
-    const [errorFlag, setErrorFlag] = React.useState(false);
-    const [errorMessage, setErrorMessage] = React.useState("")
-
     const [snackOpen, setSnackOpen] = React.useState(false);
     const [snackMessage, setSnackMessage] = React.useState("");
     const [snackSeverity, setSnackSeverity] = React.useState<"success" | "error" | "warning" | "info">("success");
 
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
-    const [authDetails, setAuthDetails] = useState('');
-
     const navigate = useNavigate();
-
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 
     useEffect(() => {
@@ -112,9 +105,6 @@ const LoginForm: React.FC = () => {
                     showSnackbar("Login failed. Please check your inputs.", "error");
                     setFieldErrors({});
                 }
-
-                setErrorFlag(true);
-                setErrorMessage("Validation error.");
             })
     };
 
