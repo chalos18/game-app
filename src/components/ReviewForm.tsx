@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import {
-    Box, Button, TextField, Typography, Rating, Alert
-} from "@mui/material";
+import React, {useState} from "react";
+import {Alert, Box, Button, Rating, TextField, Typography} from "@mui/material";
 import axios from "axios";
 
 interface ReviewFormProps {
@@ -13,12 +11,12 @@ interface ReviewFormProps {
 }
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
-       gameId,
-       gameTitle,
-       creatorId,
-       currentUser,
-       onReviewSubmitted
-    }) => {
+                                                   gameId,
+                                                   gameTitle,
+                                                   creatorId,
+                                                   currentUser,
+                                                   onReviewSubmitted
+                                               }) => {
     const [rating, setRating] = useState<number | null>(null);
     const [message, setMessage] = useState<string>("");
     const [error, setError] = useState<string>("");
@@ -40,7 +38,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
             return;
         }
 
-        const body: any = { rating };
+        const body: any = {rating};
         if (message.trim() !== "") {
             body.review = message.trim();
         }
@@ -57,7 +55,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         }).catch((error) => {
             const serverMessage = error.response.statusText;
 
-            if (error.response.statusText.includes("Cannot post more than one review on a game.")){
+            if (error.response.statusText.includes("Cannot post more than one review on a game.")) {
                 setError("You can not post more than one review on a game");
             } else {
                 setError("Failed to submit review: " + (serverMessage || error.message));
@@ -74,7 +72,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
                 Please describe what you liked or disliked about this game and whether you recommend it to others.
             </Typography>
 
-            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+            {error && <Alert severity="error" sx={{mb: 2}}>{error}</Alert>}
 
             <Box mb={2}>
                 <Typography component="legend">Rating (1-10)</Typography>
@@ -98,7 +96,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
             <Button
                 variant="contained"
                 color="primary"
-                sx={{ mt: 2 }}
+                sx={{mt: 2}}
                 onClick={handleSubmit}
             >
                 Submit Review

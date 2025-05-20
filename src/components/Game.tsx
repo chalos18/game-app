@@ -10,7 +10,7 @@ import GameListObject from "./GameListObject";
 import fallbackGameLogo from "../assets/fallback-game-logo.png";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ReviewForm from "./ReviewForm";
-import WishlistButton from "./WishlistButton";
+import WishlistAndLibraryButtons from "./WishlistAndLibraryButtons";
 
 
 const Game = () => {
@@ -325,12 +325,34 @@ const Game = () => {
                                 &nbsp;
                             </Typography>
 
-                            <Typography variant="body2" color="textSecondary">
-                                Currently in {game.numberOfWishlists} wishlist(s)
+                            <Typography variant="body2">
+                                <HashLink smooth to="#all-reviews" style={{textDecoration: 'none'}}>
+                                    All Reviews
+                                </HashLink>
                             </Typography>
 
-                            <Typography variant="body2" color="textSecondary">
-                                {game.numberOfOwners} user(s) owns this game
+                            <Typography variant="body2" color="inherit" noWrap>
+                                &nbsp;
+                            </Typography>
+
+                            <WishlistAndLibraryButtons
+                                gameId={game.gameId}
+                                creatorId={game.creatorId}
+                                isOwned={ownedGames.some(g => g.gameId === game.gameId)}
+                            />
+
+                            <Typography variant="body2" color="inherit" noWrap>
+                                &nbsp;
+                            </Typography>
+
+                            {/*<OwnGameButton*/}
+                            {/*    gameId={game.gameId}*/}
+                            {/*    creatorId={game.creatorId}*/}
+                            {/*    isOwned={ownedGames.some(g => g.gameId === game.gameId)}*/}
+                            {/*/>*/}
+
+                            <Typography variant="body2" color="inherit" noWrap>
+                                &nbsp;
                             </Typography>
 
                             <Box display="flex" alignItems="center" mt={1}>
@@ -345,25 +367,11 @@ const Game = () => {
                                     {game.creatorFirstName} {game.creatorLastName}
                                 </Typography>
                             </Box>
-                            <Typography variant="body2">
-                                <HashLink smooth to="#all-reviews" style={{textDecoration: 'none'}}>
-                                    All Reviews
-                                </HashLink>
-                            </Typography>
-
-                            <Typography variant="body2" color="inherit" noWrap>
-                                &nbsp;
-                            </Typography>
-
-                            <WishlistButton
-                                gameId={game.gameId}
-                                creatorId={game.creatorId}
-                                isOwned={ownedGames.some(g => g.gameId === game.gameId)}
-                            />
 
                         </CardContent>
                     </Box>
                 </Card>
+
                 <Card sx={{...gameCardStyles}}>
                     <Box sx={{display: 'flex', flexDirection: 'row'}}>
                         <CardContent
@@ -389,6 +397,7 @@ const Game = () => {
                         </CardContent>
                     </Box>
                 </Card>
+
                 <Card sx={{...gameCardStyles}}>
                     <Box sx={{display: 'flex', flexDirection: 'row'}}>
                         <CardContent

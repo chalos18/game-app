@@ -51,6 +51,7 @@ function Navbar() {
                 localStorage.removeItem("token");
                 localStorage.removeItem("userId");
                 localStorage.removeItem("myGamesSelectedTab");
+                localStorage.clear();
 
                 showSnackbar("User logged out successfully", "success");
 

@@ -9,7 +9,12 @@ const GamesOwnedByMe = () => {
 
     React.useEffect(() => {
         const getOwnedGames = () => {
-            axios.get(`http://localhost:4941/api/v1/games?ownedByMe=true`)
+            const token = localStorage.getItem("token");
+            axios.get(`http://localhost:4941/api/v1/games?ownedByMe=true`, {
+                headers: {
+                    "X-Authorization": token,
+                },
+            })
                 .then((response) => {
                     setOwnedGames(response.data.games);
                 }, (error) => {
@@ -22,16 +27,11 @@ const GamesOwnedByMe = () => {
         <Container maxWidth="lg" sx={{mt: 4}}>
             <Paper elevation={3} sx={{p: 3, backgroundColor: "#406262"}}>
                 <div className="p-4 space-y-4">
-                    {ownedGames.map((game: Game) => (
-                        <Box sx={{
-                            borderBottom: "1px solid #ddd",
-                            padding: "10px 0",
-                            display: 'flex',
-                            alignItems: 'flex-start'
-                        }}>
+                    <Container>
+                        {ownedGames.map((game: Game) => (
                             <GameListObject game={game}/>
-                        </Box>
-                    ))}
+                        ))}
+                    </Container>
                 </div>
             </Paper>
         </Container>

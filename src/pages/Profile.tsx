@@ -47,8 +47,8 @@ const MyGames = () => {
                         scrollButtons="auto"
                     >
                         <Tab label="Create Game" value="createGames"/>
-                        <Tab label="Owned Games" value="owned"/>
-                        <Tab label="Wishlisted Games" value="wishlisted"/>
+                        <Tab label="Library" value="owned"/>
+                        <Tab label="Wishlist" value="wishlisted"/>
                         <Tab label="Created Games" value="created"/>
                         <Tab label="Reviewed Games" value="reviewed"/>
                     </Tabs>

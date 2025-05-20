@@ -28,16 +28,11 @@ const GamesWishlistedByMe = () => {
         <Container maxWidth="lg" sx={{mt: 4}}>
             <Paper elevation={3} sx={{p: 3, backgroundColor: "#406262"}}>
                 <div className="p-4 space-y-4">
-                    {wishlistedGames.map((game: Game) => (
-                        <Box sx={{
-                            borderBottom: "1px solid #ddd",
-                            padding: "10px 0",
-                            display: 'flex',
-                            alignItems: 'flex-start'
-                        }}>
+                    <Container>
+                        {wishlistedGames.map((game: Game) => (
                             <GameListObject game={game}/>
-                        </Box>
-                    ))}
+                        ))}
+                    </Container>
                 </div>
             </Paper>
         </Container>
