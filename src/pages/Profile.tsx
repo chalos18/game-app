@@ -32,9 +32,9 @@ const MyGames = () => {
             case "reviewed":
                 return <GamesReviewedByMe/>;
             case "viewProfile":
-                return <ViewProfile />;
+                return <ViewProfile/>;
             case "editProfile":
-                return <EditProfile />;
+                return <EditProfile/>;
             default:
                 return null;
 

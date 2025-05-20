@@ -1,5 +1,5 @@
-import {Avatar, Box, Typography, Paper, Alert, Snackbar} from "@mui/material";
-import React, { useEffect, useState } from "react";
+import {Alert, Box, Paper, Snackbar, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import EditProfile from "./EditProfile";
 import fallbackAvatar from "../assets/fallback-avatar.png";
@@ -77,7 +77,7 @@ const ViewProfile = () => {
     if (!user) return <Typography>Loading...</Typography>;
 
     return (
-        <Paper elevation={3} sx={{ p: 4, maxWidth: 600, mx: "auto", mt: 4 }}>
+        <Paper elevation={3} sx={{p: 4, maxWidth: 600, mx: "auto", mt: 4}}>
             <Snackbar autoHideDuration={5000}
                       open={snackOpen}
                       onClose={handleSnackClose}
@@ -102,7 +102,7 @@ const ViewProfile = () => {
                 </Box>
 
             </Box>
-                <EditProfile/>
+            <EditProfile/>
         </Paper>
     );
 };

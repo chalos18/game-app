@@ -1,8 +1,5 @@
-import {
-    Avatar, Box, Button, TextField, Typography, Paper, IconButton, Alert, Snackbar
-} from "@mui/material";
-import React, { useState, useEffect } from "react";
-import DeleteIcon from '@mui/icons-material/Delete';
+import {Alert, Box, Button, Paper, Snackbar, TextField, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import fallbackAvatar from "../assets/fallback-avatar.png";
 
@@ -107,8 +104,8 @@ const EditProfile = () => {
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setForm(f => ({ ...f, [name]: value }));
+        const {name, value} = e.target;
+        setForm(f => ({...f, [name]: value}));
     };
 
     const handleSubmit = async () => {
@@ -138,11 +135,11 @@ const EditProfile = () => {
 
 
     const handleRemovePicture = () => {
-        setForm(f => ({ ...f, profileImageUrl: "" }));
+        setForm(f => ({...f, profileImageUrl: ""}));
     };
 
     return (
-        <Paper elevation={3} sx={{ p: 4, maxWidth: 600, mx: "auto", mt: 4 }}>
+        <Paper elevation={3} sx={{p: 4, maxWidth: 600, mx: "auto", mt: 4}}>
 
             <Snackbar autoHideDuration={5000}
                       open={snackOpen}
@@ -162,11 +159,15 @@ const EditProfile = () => {
             {/*    <IconButton onClick={handleRemovePicture}><DeleteIcon /></IconButton>*/}
             {/*</Box>*/}
 
-            <TextField fullWidth label="First Name" name="firstName" value={form.firstName} onChange={handleChange} margin="normal" />
-            <TextField fullWidth label="Last Name" name="lastName" value={form.lastName} onChange={handleChange} margin="normal" />
-            <TextField fullWidth label="Email" name="email" value={form.email} onChange={handleChange} margin="normal" />
-            <TextField fullWidth label="Current Password" type="password" name="currentPassword" value={form.currentPassword} onChange={handleChange} margin="normal" />
-            <TextField fullWidth label="New Password" type="password" name="newPassword" value={form.newPassword} onChange={handleChange} margin="normal" />
+            <TextField fullWidth label="First Name" name="firstName" value={form.firstName} onChange={handleChange}
+                       margin="normal"/>
+            <TextField fullWidth label="Last Name" name="lastName" value={form.lastName} onChange={handleChange}
+                       margin="normal"/>
+            <TextField fullWidth label="Email" name="email" value={form.email} onChange={handleChange} margin="normal"/>
+            <TextField fullWidth label="Current Password" type="password" name="currentPassword"
+                       value={form.currentPassword} onChange={handleChange} margin="normal"/>
+            <TextField fullWidth label="New Password" type="password" name="newPassword" value={form.newPassword}
+                       onChange={handleChange} margin="normal"/>
 
             {error && <Typography color="error">{error}</Typography>}
 
