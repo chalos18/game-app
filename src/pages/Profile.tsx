@@ -33,8 +33,8 @@ const MyGames = () => {
                 return <GamesReviewedByMe/>;
             case "viewProfile":
                 return <ViewProfile/>;
-            case "editProfile":
-                return <EditProfile/>;
+            // case "editProfile":
+            //     return <EditProfile/>;
             default:
                 return null;
 
@@ -54,7 +54,7 @@ const MyGames = () => {
                         scrollButtons="auto"
                     >
                         <Tab label="View Profile" value="viewProfile"/>
-                        <Tab label="Edit Profile" value="editProfile"/>
+                        {/*<Tab label="Edit Profile" value="editProfile"/>*/}
                         <Tab label="Create Game" value="createGames"/>
                         <Tab label="Library" value="owned"/>
                         <Tab label="Wishlist" value="wishlisted"/>
@@ -62,7 +62,7 @@ const MyGames = () => {
                         <Tab label="Reviewed Games" value="reviewed"/>
                     </Tabs>
                 </Box>
-                <Box>
+                <Box display="flex" flexDirection="column" alignItems="center">
                     {renderSection()}
                 </Box>
             </Paper>

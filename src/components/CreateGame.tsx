@@ -53,8 +53,6 @@ const CreateGame = () => {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const navigate = useNavigate();
-
     React.useEffect(() => {
         getGames();
         getGenres();

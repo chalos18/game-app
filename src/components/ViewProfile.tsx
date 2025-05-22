@@ -1,24 +1,40 @@
-import {Alert, Box, Paper, Snackbar, Typography} from "@mui/material";
-import React, {useEffect, useState} from "react";
-import axios from "axios";
 import EditProfile from "./EditProfile";
+import {Avatar, Box, Button, IconButton, Paper, Typography} from "@mui/material";
+import React, {useState, useEffect, useRef} from "react";
+import axios from "axios";
+import CSS from "csstype";
 import fallbackAvatar from "../assets/fallback-avatar.png";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useUserContext } from "../contexts/UserContext";
 
-interface User {
-    firstName: string;
-    lastName: string;
-    email: string;
-    profileImageUrl?: string;
-}
 
-const ViewProfile = () => {
-    const [user, setUser] = useState<User | null>(null);
-
-    const [snackOpen, setSnackOpen] = React.useState(false);
-    const [snackMessage, setSnackMessage] = React.useState("");
-    const [snackSeverity, setSnackSeverity] = React.useState<"success" | "error" | "warning" | "info">("success");
+const ProfilePage = () => {
+    const [editOpen, setEditOpen] = useState(false);
+    const [user, setUser] = useState<User>({ firstName: "", lastName: "", email: "" });
 
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { avatarUrl, setAvatarUrl } = useUserContext();
+
+    const [snackOpen, setSnackOpen] = useState(false);
+    const [snackMessage, setSnackMessage] = useState("");
+    const [snackSeverity, setSnackSeverity] = useState<"success" | "error" | "warning" | "info">("success");
+
+
+    const showSnackbar = (message: string, severity: typeof snackSeverity) => {
+        setSnackMessage(message);
+        setSnackSeverity(severity);
+        setSnackOpen(true);
+    };
+
+    const fetchProfile = async () => {
+        const userId = localStorage.getItem("userId");
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`http://localhost:4941/api/v1/users/${userId}`, {
+            headers: { "X-Authorization": token }
+        });
+        setUser(res.data);
+    };
 
     React.useEffect(() => {
         const userId = localStorage.getItem("userId");
@@ -29,82 +45,119 @@ const ViewProfile = () => {
             .then((response) => {
                 const url = URL.createObjectURL(response.data);
                 setUserImageUrl(url);
+                setAvatarUrl(url); // 👈 Update global state
             })
             .catch((error) => {
                 if (error.response?.status === 404) {
                     setUserImageUrl(null);
+                    setAvatarUrl(null);
                 } else {
                     setUserImageUrl(fallbackAvatar);
+                    setAvatarUrl(fallbackAvatar);
                 }
             });
     }, []);
 
-
-    const showSnackbar = (message: string, severity: "success" | "error" | "warning" | "info") => {
-        setSnackMessage(message);
-        setSnackSeverity(severity);
-        setSnackOpen(true);
-    };
-
-    const handleSnackClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === "clickaway") return;
-        setSnackOpen(false);
-    };
-
-    const getMyProfile = () => {
-        const userId = localStorage.getItem("userId");
-        const token = localStorage.getItem("token");
-
-        axios.get(`http://localhost:4941/api/v1/users/${userId}`, {
-            headers: {
-                "X-Authorization": token,
-            },
-        })
-            .then((response) => {
-                setUser(response.data);
-
-            })
-            .catch((error) => {
-                // const backendMessage = error.response.statusText || "Login failed";
-                showSnackbar("Failed to fetch profile", "error");
-            })
-    };
-
     useEffect(() => {
-        getMyProfile();
+        fetchProfile();
     }, []);
 
-    if (!user) return <Typography>Loading...</Typography>;
+    const card: CSS.Properties = {
+        padding: "20px",
+        margin: "20px",
+    };
 
     return (
-        <Paper elevation={3} sx={{p: 4, maxWidth: 600, mx: "auto", mt: 4}}>
-            <Snackbar autoHideDuration={5000}
-                      open={snackOpen}
-                      onClose={handleSnackClose}
-                      key={snackMessage}
-                      anchorOrigin={{vertical: 'top', horizontal: 'right'}}
-            >
-                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{width: "100%"}}>
-                    {snackMessage}
-                </Alert>
-            </Snackbar>
-            <Box display="flex" alignItems="center" gap={3}>
-                <img
-                    src={userImageUrl || fallbackAvatar}
-                    alt="User Image"
-                    width={70}
-                    height={70}
-                    style={{borderRadius: "50%", marginRight: 8}}
-                />
-                <Box>
-                    <Typography variant="h6">{user.firstName} {user.lastName}</Typography>
-                    <Typography variant="body1">{user.email}</Typography>
+        <Paper elevation={3} style={card} sx={{ backgroundColor: "white", maxWidth: 600, margin: "40px auto" }}>
+            <Box display="flex" flexDirection="column" alignItems="center">
+                <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
+                    <img
+                        src={avatarUrl || fallbackAvatar}
+                        alt="Profile"
+                        style={{ width: "200px", height: "200px", borderRadius: "10%", objectFit: "cover", marginBottom: "10px" }}
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+
+                    <Box display="flex" gap={1} mb={1}>
+                        <Button variant="outlined" onClick={() => fileInputRef.current?.click()}>
+                            {avatarUrl ? "Change Avatar" : "Upload Avatar"}
+                        </Button>
+                        <IconButton onClick={async () => {
+                            const userId = localStorage.getItem("userId");
+                            const token = localStorage.getItem("token");
+                            try {
+                                await axios.delete(`http://localhost:4941/api/v1/users/${userId}/image`, {
+                                    headers: { "X-Authorization": token }
+                                });
+                                setUserImageUrl(fallbackAvatar);
+                                setAvatarUrl(fallbackAvatar);
+                                showSnackbar("Profile picture removed", "success");
+                            } catch {
+                                showSnackbar("Failed to remove profile picture", "error");
+                            }
+                        }}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Box>
+
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/gif"
+                        style={{ display: 'none' }}
+                        onChange={e => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                                const token = localStorage.getItem("token");
+                                const userId = localStorage.getItem("userId");
+                                file.arrayBuffer().then(buffer => {
+                                    axios.put(`http://localhost:4941/api/v1/users/${userId}/image`, buffer, {
+                                        headers: {
+                                            "Content-Type": file.type,
+                                            "X-Authorization": token
+                                        }
+                                    }).then(() => {
+                                        const imageUrl = URL.createObjectURL(file);
+                                        setUserImageUrl(imageUrl);
+                                        setAvatarUrl(imageUrl);
+                                        showSnackbar("Profile picture updated!", "success");
+                                    }).catch(() => {
+                                        showSnackbar("Failed to upload picture", "error");
+                                    });
+                                });
+                            }
+                        }}
+                    />
                 </Box>
 
+                <Typography variant={"h5"} color="textPrimary" >
+                    Welcome, {user.firstName} {user.lastName}
+                </Typography>
+
+                <Typography variant="body2" color="inherit" noWrap>
+                    &nbsp;
+                </Typography>
+
+                <Typography variant={"body2"} color="textSecondary">
+                    {user.email}
+                </Typography>
+
+                <Typography variant="body2" color="inherit" noWrap>
+                    &nbsp;
+                </Typography>
+
+                <Button variant="outlined" onClick={() => setEditOpen(true)}>Edit Profile</Button>
+
+                <EditProfile
+                    open={editOpen}
+                    onClose={() => setEditOpen(false)}
+                    onUpdated={fetchProfile}
+                />
             </Box>
-            <EditProfile/>
         </Paper>
     );
+
+
 };
 
-export default ViewProfile;
+export default ProfilePage;
