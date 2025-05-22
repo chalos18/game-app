@@ -38,7 +38,6 @@ const GameListObject = (props: IGameProps) => {
 
     const [imageUrl, setImageUrl] = React.useState<string | null>(null);
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
-    const [imgError, setImgError] = useState(false)
 
     const navigate = useNavigate();
 
@@ -48,23 +47,6 @@ const GameListObject = (props: IGameProps) => {
     const [snackOpen, setSnackOpen] = React.useState(false);
     const [snackMessage, setSnackMessage] = React.useState("");
     const [snackSeverity, setSnackSeverity] = React.useState<"success" | "error" | "warning">("success");
-
-    const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
-
-    const [newTitle, setNewTitle] = React.useState("");
-    const [newDescription, setNewDescription] = React.useState("");
-    const [newGenreId, setNewGenreId] = React.useState<number | "">("");
-    const [newPrice, setNewPrice] = React.useState<number | "">("");
-    const [newPlatformIds, setNewPlatformIds] = React.useState<number[]>([])
-
-    type Review = {
-        reviewerId: number;
-        reviewerFirstName: string;
-        reviewerLastName: string;
-        rating: number;
-        review: string | null;
-        timestamp: string;
-    };
 
     const [openEditDialog, setOpenEditDialog] = React.useState(false)
 
@@ -201,7 +183,6 @@ const GameListObject = (props: IGameProps) => {
         if (newPlatformIds.length === 0) errors.platformIds = "One or more platforms required";
 
         if (Object.keys(errors).length > 0) {
-            setFieldErrors(errors);
             showSnackbar("Please fix the highlighted fields", "warning");
             return;
         }
@@ -231,13 +212,6 @@ const GameListObject = (props: IGameProps) => {
 
                 editGameFromStore(game, newTitle, newDescription, newGenreId, newPrice, newPlatformIds);
                 showSnackbar("Game updated successfully", "success");
-
-                setNewTitle("");
-                setNewDescription("");
-                setNewGenreId("");
-                setNewPrice("");
-                setNewPlatformIds([]);
-                setFieldErrors({});
             })
     }
 
@@ -326,7 +300,6 @@ const GameListObject = (props: IGameProps) => {
                         sx={{objectFit: "cover", color: "black"}}
                         image={imageUrl || fallbackGameLogo}
                         alt="Game hero"
-                        onError={() => setImgError(true)}
                     />
                     <CardContent
                         sx={{

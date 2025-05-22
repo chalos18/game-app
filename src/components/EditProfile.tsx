@@ -1,6 +1,5 @@
 import {
     Alert,
-    Avatar,
     Box,
     Button,
     Dialog,
@@ -11,11 +10,9 @@ import {
     Snackbar,
     TextField
 } from "@mui/material";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
-import fallbackAvatar from "../assets/fallback-avatar.png";
-import DeleteIcon from "@mui/icons-material/Delete";
-import {Visibility, VisibilityOff } from "@mui/icons-material";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 interface EditProfileProps {
     open: boolean;
@@ -103,7 +100,7 @@ const EditProfile: React.FC<EditProfileProps> = ({open, onClose, onUpdated}) => 
         const userId = localStorage.getItem("userId");
         const token = localStorage.getItem("token");
 
-        const newErrors: {[key: string]: string} = {};
+        const newErrors: { [key: string]: string } = {};
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             newErrors.email = "Invalid email format";
@@ -135,7 +132,7 @@ const EditProfile: React.FC<EditProfileProps> = ({open, onClose, onUpdated}) => 
         }
 
         try {
-            const payload: any = { firstName, lastName, email };
+            const payload: any = {firstName, lastName, email};
             if (currentPassword && newPassword) {
                 payload.currentPassword = currentPassword;
                 payload.password = newPassword;
@@ -161,7 +158,6 @@ const EditProfile: React.FC<EditProfileProps> = ({open, onClose, onUpdated}) => 
             }
         }
     };
-
 
 
     const handleSnackClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
@@ -198,7 +194,8 @@ const EditProfile: React.FC<EditProfileProps> = ({open, onClose, onUpdated}) => 
 
                 <DialogContent>
 
-                    <TextField fullWidth name="firstName" label="First Name" value={form.firstName} onChange={handleChange}
+                    <TextField fullWidth name="firstName" label="First Name" value={form.firstName}
+                               onChange={handleChange}
                                margin="normal" error={!!fieldErrors.firstName}
                                helperText={fieldErrors.firstName || `${form.firstName.length}/64 characters`}
                                slotProps={{htmlInput: {maxLength: 64}}}/>
@@ -237,7 +234,7 @@ const EditProfile: React.FC<EditProfileProps> = ({open, onClose, onUpdated}) => 
                                         onClick={handleClickShowPassword}
                                         edge="end"
                                     >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        {showPassword ? <VisibilityOff/> : <Visibility/>}
                                     </IconButton>
                                 </InputAdornment>
                             ),
@@ -262,7 +259,7 @@ const EditProfile: React.FC<EditProfileProps> = ({open, onClose, onUpdated}) => 
                                         onClick={handleClickShowNewPassword}
                                         edge="end"
                                     >
-                                        {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                                        {showNewPassword ? <VisibilityOff/> : <Visibility/>}
                                     </IconButton>
                                 </InputAdornment>
                             ),
