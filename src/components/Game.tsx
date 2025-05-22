@@ -295,7 +295,7 @@ const Game = () => {
                             </Typography>
 
                             <Typography variant="body2" color="textSecondary">
-                                {game.price === 0.00 ? "FREE" : "$" + game.price?.toFixed(2)}
+                                {game.price === 0.00 ? "FREE" : "$" + (game.price/100).toFixed(2)}
                             </Typography>
 
                             <Typography variant="body2" color="textSecondary">
@@ -344,12 +344,6 @@ const Game = () => {
                             <Typography variant="body2" color="inherit" noWrap>
                                 &nbsp;
                             </Typography>
-
-                            {/*<OwnGameButton*/}
-                            {/*    gameId={game.gameId}*/}
-                            {/*    creatorId={game.creatorId}*/}
-                            {/*    isOwned={ownedGames.some(g => g.gameId === game.gameId)}*/}
-                            {/*/>*/}
 
                             <Typography variant="body2" color="inherit" noWrap>
                                 &nbsp;

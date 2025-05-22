@@ -70,7 +70,7 @@ const ProfilePage = () => {
     };
 
     return (
-        <Paper elevation={3} style={card} sx={{backgroundColor: "white", maxWidth: 600, margin: "40px auto"}}>
+        <Paper elevation={3} style={card} sx={{backgroundColor: "white", margin: "40px"}}>
             <Snackbar
                 open={snackOpen}
                 autoHideDuration={5000}

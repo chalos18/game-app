@@ -40,7 +40,7 @@ const MyGames = () => {
 
     return (
         <Container maxWidth="lg" sx={{mt: 4}}>
-            <Paper elevation={3} sx={{p: 3, backgroundColor: "#172D2D", minHeight: '80vh'}}>
+            <Paper elevation={3} sx={{p: 3, backgroundColor: "#172D2D"}}>
                 <Box sx={{borderBottom: 1, borderColor: 'divider', backgroundColor: 'white', borderRadius: 1, mb: 3}}>
                     <Tabs
                         value={selectedSection}

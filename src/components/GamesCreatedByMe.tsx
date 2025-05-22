@@ -21,7 +21,7 @@ const GamesCreatedByMe = () => {
 
     return (
         <Container maxWidth="lg" sx={{mt: 4}}>
-            <Paper elevation={3} sx={{p: 3, backgroundColor: "#406262"}}>
+            <Paper elevation={3} sx={{p: 3, backgroundColor: "#DAE7E7"}}>
                 <div className="p-4 space-y-4">
                     <Container>
                         {games.map(game => (

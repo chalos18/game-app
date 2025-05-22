@@ -1,5 +1,5 @@
 import React from "react";
-import { Container } from "@mui/material";
+import {Container} from "@mui/material";
 import Game from "../components/Game";
 
 const GamePage = () => {
