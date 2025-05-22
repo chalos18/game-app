@@ -225,6 +225,32 @@ const GameListObject = (props: IGameProps) => {
             });
     }
 
+    const handleConfirmDelete = async () => {
+        const token = localStorage.getItem("token");
+        try {
+            const response = await axios.get(`http://localhost:4941/api/v1/games/${game.gameId}/reviews`);
+            const reviews = response.data;
+
+            if (reviews.length > 0) {
+                showSnackbar("Can not delete a game that has one or more reviews", "error");
+                handleDeleteDialogClose();
+                return;
+            }
+
+            await axios.delete(`http://localhost:4941/api/v1/games/${game.gameId}`, {
+                headers: { "X-Authorization": token },
+            });
+
+            deleteGameFromStore(game);
+            showSnackbar("Game deleted successfully", "success");
+        } catch (error) {
+            showSnackbar("Failed to delete game: " + error?.toString(), "error");
+        } finally {
+            handleDeleteDialogClose();
+        }
+    };
+
+
 
     const gameCardStyles: CSS.Properties = {
         display: "inline-block",
@@ -269,28 +295,23 @@ const GameListObject = (props: IGameProps) => {
                     </DialogContent>
                 </Dialog>
 
-                <Dialog
-                    open={openDeleteDialog}
-                    onClose={handleDeleteDialogClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description">
-                    <DialogTitle id="alert-dialog-title">
-                        {"Delete Game?"}
-                    </DialogTitle>
+                <Dialog open={openDeleteDialog} onClose={handleDeleteDialogClose}>
+                    <DialogTitle>Delete Game</DialogTitle>
                     <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
+                        <DialogContentText>
                             Are you sure you want to delete this game?
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleDeleteDialogClose}>Cancel</Button>
-                        <Button variant="outlined" color="error" onClick={() => {
-                            deleteGame(game.gameId)
-                        }} autoFocus>
+                        <Button onClick={handleDeleteDialogClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={() => handleConfirmDelete()} color="error" autoFocus>
                             Delete
                         </Button>
                     </DialogActions>
                 </Dialog>
+
 
                 <Box onClick={() => navigate(`/games/${game.gameId}`)}>
                     <CardMedia
@@ -375,27 +396,16 @@ const GameListObject = (props: IGameProps) => {
                                     <Button
                                         variant="outlined"
                                         color="error"
-                                        onClick={async (e) => {
+                                        onClick={(e) => {
                                             e.stopPropagation();
-                                            try {
-                                                const response = await axios.get(`http://localhost:4941/api/v1/games/${game.gameId}/reviews`);
-                                                const reviews = response.data;
-                                                if (reviews.length > 0) {
-                                                    showSnackbar("Can not delete a game that has one or more reviews", "error");
-                                                    handleDeleteDialogClose();
-                                                } else {
-                                                    deleteGame(game.gameId);
-                                                }
-                                            } catch (error) {
-                                                showSnackbar("Failed to check reviews", "error");
-                                                handleDeleteDialogClose();
-                                            }
+                                            setOpenDeleteDialog(true);
                                         }}
                                         autoFocus
                                     >
-                                        <DeleteIcon/>
+                                        <DeleteIcon />
                                     </Button>
                                 )}
+
                             </CardActions>
                         </Box>
                     </CardContent>
