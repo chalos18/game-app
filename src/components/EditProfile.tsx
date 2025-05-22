@@ -115,9 +115,7 @@ const EditProfile: React.FC<EditProfileProps> = ({open, onClose, onUpdated}) => 
             if (!newPassword) {
                 newErrors.newPassword = "New password is required";
             }
-            // if (currentPassword && currentPassword.length < 6) {
-            //     newErrors.currentPassword = "Current password must be at least 6 characters";
-            // }
+
             if (newPassword && newPassword.length < 6) {
                 newErrors.newPassword = "New password must be at least 6 characters";
             }
@@ -197,13 +195,13 @@ const EditProfile: React.FC<EditProfileProps> = ({open, onClose, onUpdated}) => 
                     <TextField fullWidth name="firstName" label="First Name" value={form.firstName}
                                onChange={handleChange}
                                margin="normal" error={!!fieldErrors.firstName}
-                               helperText={fieldErrors.firstName || `${form.firstName.length}/64 characters`}
+                               helperText={fieldErrors.firstName || `${form.firstName?.length}/64 characters`}
                                slotProps={{htmlInput: {maxLength: 64}}}/>
 
                     <TextField fullWidth name="lastName" label="Last Name" value={form.lastName} onChange={handleChange}
                                margin="normal"
                                error={!!fieldErrors.lastName}
-                               helperText={fieldErrors.lastName || `${form.lastName.length}/64 characters`}
+                               helperText={fieldErrors.lastName || `${form.lastName?.length}/64 characters`}
                                slotProps={{htmlInput: {maxLength: 64}}}/>
 
                     <TextField fullWidth name="email" label="Email" value={form.email}
@@ -213,7 +211,7 @@ const EditProfile: React.FC<EditProfileProps> = ({open, onClose, onUpdated}) => 
                                }}
                                margin="normal"
                                error={!!fieldErrors.email}
-                               helperText={fieldErrors.email || `${form.email.length}/256 characters`}
+                               helperText={fieldErrors.email || `${form.email?.length}/256 characters`}
                                slotProps={{htmlInput: {maxLength: 256}}}/>
 
                     <TextField

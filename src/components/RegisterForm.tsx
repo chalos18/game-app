@@ -241,8 +241,8 @@ const RegisterForm = () => {
                 }}
                 error={!!fieldErrors.password}
                 helperText={fieldErrors.password}
-                slotProps={{
-                    input: (
+                InputProps={{
+                    endAdornment: (
                         <InputAdornment position="end">
                             <IconButton
                                 aria-label="toggle password visibility"

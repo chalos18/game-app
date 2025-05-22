@@ -39,6 +39,8 @@ const GameList = () => {
     const [genres, setGenres] = React.useState<{ genreId: number, name: string }[]>([]);
     const [platforms, setPlatforms] = React.useState<{ platformId: number, name: string }[]>([]);
 
+    const [sortBy, setSortBy] = React.useState("CREATED_ASC");
+
 
     const totalPages = Math.ceil(totalGames / pageSize);
 
@@ -90,6 +92,8 @@ const GameList = () => {
             params.append("price", String(maxPrice));
         }
 
+        params.append("sortBy", sortBy);
+
         console.log(params.toString());
 
         axios.get(`http://localhost:4941/api/v1/games?${params.toString()}`)
@@ -101,7 +105,7 @@ const GameList = () => {
                 setTotalGames(0);
                 showSnackbar("Getting games failed", "error");
             });
-    }, [currentPage, pageSize, searchTerm, selectedGenres, selectedPlatforms, maxPrice, setGames]);
+    }, [currentPage, pageSize, searchTerm, selectedGenres, selectedPlatforms, maxPrice, sortBy, setGames]);
 
 
     React.useEffect(() => {
@@ -152,6 +156,8 @@ const GameList = () => {
                         onPlatformsChange={setSelectedPlatforms}
                         onPriceChange={setMaxPrice}
                         setCurrentPage={setCurrentPage}
+                        sortBy={sortBy}
+                        onSortByChange={setSortBy}
                     />
 
                     <FormControl sx={{ mt: 2, minWidth: 120 }}>
@@ -176,6 +182,10 @@ const GameList = () => {
                     </Grid>
 
                     <Box style={{marginTop: 24, textAlign: "center"}}>
+                        {totalPages === 0 && (
+                            <Typography sx={{mt: 2}}>No games available</Typography>
+                        )}
+
                         <Typography variant="body1">
                             Page {totalPages === 0 ? 0 : currentPage} of {totalPages}
                         </Typography>
@@ -187,9 +197,6 @@ const GameList = () => {
                             <Button onClick={goToLast} disabled={currentPage === totalPages}>Last</Button>
                         </ButtonGroup>
 
-                        {totalPages === 0 && (
-                            <Typography sx={{mt: 2}}>No games available</Typography>
-                        )}
                     </Box>
                 </Box>
             </Paper>

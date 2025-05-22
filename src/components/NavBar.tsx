@@ -29,8 +29,30 @@ function Navbar() {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        setIsLoggedIn(!!token);
-    }, []);
+        const userId = localStorage.getItem("userId");
+
+        if (!token) {
+            setIsLoggedIn(false);
+            return;
+        }
+
+        axios.get(`http://localhost:4941/api/v1/users/${userId}`, {
+            headers: {
+                "X-Authorization": token,
+            },
+        }).then(() => {
+            setIsLoggedIn(true);
+        }).catch((error) => {
+            if (error.response?.status === 401 || error.response?.status === 404) {
+                localStorage.clear();
+                setIsLoggedIn(false);
+                navigate("/login");
+            } else {
+                console.error("Unexpected error verifying user", error);
+            }
+        });
+    }, [navigate]);
+
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -63,7 +85,9 @@ function Navbar() {
                     window.location.href = "/login";
                 }, 500);
             })
-            .catch(() => {
+            .catch((error) => {
+                const backendMessage = error.response || "Logout failed";
+                console.log(backendMessage)
                 showSnackbar("Logout failed", "error");
             })
     };
