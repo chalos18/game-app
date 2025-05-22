@@ -43,6 +43,7 @@ const ProfilePage = () => {
             })
             .then((response) => {
                 const url = URL.createObjectURL(response.data);
+                // localStorage.setItem("avatarUrl", url);
                 setAvatarUrl(url);
             })
             .catch((error) => {

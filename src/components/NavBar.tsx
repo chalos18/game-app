@@ -14,7 +14,7 @@ function Navbar() {
     const [snackMessage, setSnackMessage] = React.useState("");
     const [snackSeverity, setSnackSeverity] = React.useState<"success" | "error" | "warning">("success");
 
-    const {avatarUrl} = useUserContext();
+    const {avatarUrl, setAvatarUrl} = useUserContext();
 
     const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
         setSnackMessage(message);
@@ -92,9 +92,28 @@ function Navbar() {
             })
     };
 
+
+    React.useEffect(() => {
+        const userId = localStorage.getItem("userId");
+        axios
+            .get(`http://localhost:4941/api/v1/users/${userId}/image`, {
+                responseType: 'blob'
+            })
+            .then((response) => {
+                const url = URL.createObjectURL(response.data);
+                setAvatarUrl(url);
+            })
+            .catch((error) => {
+                if (error.response?.status === 404) {
+                    setAvatarUrl(null);
+                } else {
+                    setAvatarUrl(fallbackAvatar);
+                }
+            });
+    }, []);
+
+
     return (
-        // TODO: there is a weird bug where if you refresh the page, the avatar image goes back to the fallbackAvatar
-        // However If you then go to ViewProfile, the image comes back
         <AppBar position="static" sx={{backgroundColor: '#172D2D'}}>
             <Snackbar autoHideDuration={5000}
                       open={snackOpen}

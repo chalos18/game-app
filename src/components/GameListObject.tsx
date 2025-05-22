@@ -238,7 +238,7 @@ const GameListObject = (props: IGameProps) => {
             }
 
             await axios.delete(`http://localhost:4941/api/v1/games/${game.gameId}`, {
-                headers: { "X-Authorization": token },
+                headers: {"X-Authorization": token},
             });
 
             deleteGameFromStore(game);
@@ -402,7 +402,7 @@ const GameListObject = (props: IGameProps) => {
                                         }}
                                         autoFocus
                                     >
-                                        <DeleteIcon />
+                                        <DeleteIcon/>
                                     </Button>
                                 )}
 

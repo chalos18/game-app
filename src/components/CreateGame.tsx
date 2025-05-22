@@ -213,7 +213,6 @@ const CreateGame = () => {
     };
 
     return (
-        // sx = {{backgroundColor: "#406262"}}
         <Paper elevation={3} style={card} sx={{backgroundColor: "white"}}>
             <Snackbar
                 open={snackOpen}
