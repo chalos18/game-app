@@ -71,10 +71,16 @@ const Game = () => {
 
     React.useEffect(() => {
         const getOwnedGames = () => {
-            axios.get(`http://localhost:4941/api/v1/games?ownedByMe=true`)
+            const token = localStorage.getItem("token");
+            axios.get(`http://localhost:4941/api/v1/games?ownedByMe=true`, {
+                headers: {
+                    "X-Authorization": token,
+                },
+            })
                 .then((response) => {
                     setOwnedGames(response.data.games);
                 }, (error) => {
+                    console.log(error)
                 });
         };
         getOwnedGames();

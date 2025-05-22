@@ -32,7 +32,7 @@ const GamesOwnedByMe = () => {
                 .then((response) => {
                     setOwnedGames(response.data.games);
                 }, () => {
-                    showSnackbar("Getting games failed", "error");
+                    // showSnackbar("Getting games failed", "error");
                 });
         };
         getOwnedGames();

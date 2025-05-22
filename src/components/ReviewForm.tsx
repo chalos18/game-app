@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Alert, Box, Button, Rating, TextField, Typography} from "@mui/material";
+import {Alert, Box, Button, Rating, Snackbar, TextField, Typography} from "@mui/material";
 import axios from "axios";
 
 interface ReviewFormProps {
@@ -11,16 +11,49 @@ interface ReviewFormProps {
 }
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
-                                                   gameId,
-                                                   gameTitle,
-                                                   creatorId,
-                                                   currentUser,
-                                                   onReviewSubmitted
-                                               }) => {
+       gameId,
+       gameTitle,
+       creatorId,
+       currentUser,
+       onReviewSubmitted
+   }) => {
     const [rating, setRating] = useState<number | null>(null);
     const [message, setMessage] = useState<string>("");
     const [error, setError] = useState<string>("");
 
+    const [snackOpen, setSnackOpen] = React.useState(false);
+    const [snackMessage, setSnackMessage] = React.useState("");
+    const [snackSeverity, setSnackSeverity] = React.useState<"success" | "error" | "warning">("success");
+
+    const [ownedGames, setOwnedGames] = React.useState<Game[]>([]);
+
+    const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
+        setSnackMessage(message);
+        setSnackSeverity(severity);
+        setSnackOpen(true);
+    };
+
+    const handleSnackClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === "clickaway") return;
+        setSnackOpen(false);
+    };
+
+    React.useEffect(() => {
+        const getOwnedGames = () => {
+            const token = localStorage.getItem("token");
+            axios.get(`http://localhost:4941/api/v1/games?ownedByMe=true`, {
+                headers: {
+                    "X-Authorization": token,
+                },
+            })
+                .then((response) => {
+                    setOwnedGames(response.data.games);
+                }, () => {
+                    // showSnackbar("Getting games failed", "error");
+                });
+        };
+        getOwnedGames();
+    }, [setOwnedGames]);
 
     const handleSubmit = () => {
         if (!currentUser.isAuthenticated) {
@@ -41,6 +74,13 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         const body: any = {rating};
         if (message.trim() !== "") {
             body.review = message.trim();
+        }
+
+        console.log(ownedGames);
+
+        if (!ownedGames.some(game => game.gameId === gameId)) {
+            setError("You must own the game to leave a review");
+            return;
         }
 
         axios.post(`http://localhost:4941/api/v1/games/${gameId}/reviews`, body, {
@@ -65,6 +105,17 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
 
     return (
         <Box mt={3}>
+            <Snackbar
+                open={snackOpen}
+                autoHideDuration={5000}
+                onClose={handleSnackClose}
+                anchorOrigin={{vertical: "top", horizontal: "center"}}
+                style={{zIndex: 9999}}
+            >
+                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{width: "100%"}}>
+                    {snackMessage}
+                </Alert>
+            </Snackbar>
             <Typography variant="h6">
                 Write a review for {gameTitle}
             </Typography>

@@ -70,6 +70,11 @@ const LoginForm: React.FC = () => {
             errors.email = "Email already in use";
         }
 
+        if (message.includes("Invalid email/password")) {
+            errors.password = "Invalid email/password";
+            // errors.email = "Invalid email/password";
+        }
+
         return errors;
     };
 
@@ -98,6 +103,7 @@ const LoginForm: React.FC = () => {
             .catch((error) => {
                 const backendMessage = error.response.statusText || "Login failed";
                 const parsedErrors = parseValidationError(backendMessage);
+                console.log(backendMessage);
 
                 if (Object.keys(parsedErrors).length > 0) {
                     setFieldErrors(parsedErrors);

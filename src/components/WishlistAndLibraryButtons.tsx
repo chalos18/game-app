@@ -73,7 +73,6 @@ const WishlistAndLibraryButtons: React.FC<WishlistButtonProps> = ({gameId, creat
         setToken(storedToken);
         setIsAuthenticated(!!storedToken);
 
-        // NEW: Load owned/wishlist state from localStorage
         const wishlist = localStorage.getItem("wishlistGames");
         const owned = localStorage.getItem("ownedGames");
 
@@ -319,10 +318,6 @@ const WishlistAndLibraryButtons: React.FC<WishlistButtonProps> = ({gameId, creat
             showSnackbar("You can not get your own game", "error");
             return;
         }
-        if (isOwned) {
-            showSnackbar("Game is already owned", "error");
-            return;
-        }
 
         setLoading(true);
 
@@ -378,7 +373,7 @@ const WishlistAndLibraryButtons: React.FC<WishlistButtonProps> = ({gameId, creat
     };
 
 
-    if (userId === creatorId || isOwned) {
+    if (userId === creatorId) {
         return null;
     }
 
@@ -404,15 +399,23 @@ const WishlistAndLibraryButtons: React.FC<WishlistButtonProps> = ({gameId, creat
                 &nbsp;
             </Typography>
 
-            {!hasWishlisted && (
-                <Button variant="contained" onClick={handleWishlist} disabled={loading}>
-                    Add to your wishlist
+            {hasWishlisted ? (
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleWishlistRemoval}
+                    disabled={loading}
+                >
+                    Remove from Wishlist
                 </Button>
-            )}
-
-            {hasWishlisted && isAuthenticated && (
-                <Button variant="contained" onClick={handleWishlistRemoval} disabled={loading}>
-                    Remove from wishlist
+            ) : (
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleWishlist}
+                    disabled={loading}
+                >
+                    Add to your wishlist
                 </Button>
             )}
 
@@ -428,15 +431,23 @@ const WishlistAndLibraryButtons: React.FC<WishlistButtonProps> = ({gameId, creat
                 &nbsp;
             </Typography>
 
-            {!hasOwned && (
-                <Button variant="contained" onClick={handleOwningGame} disabled={loading}>
-                    Get game
+            {hasOwned ? (
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleOwningGameRemoval}
+                    disabled={loading}
+                >
+                    Remove from Library
                 </Button>
-            )}
-
-            {hasOwned && isAuthenticated && (
-                <Button variant="contained" onClick={handleOwningGameRemoval} disabled={loading}>
-                    Remove from library
+            ) : (
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleOwningGame}
+                    disabled={loading}
+                >
+                    Get Game
                 </Button>
             )}
 
