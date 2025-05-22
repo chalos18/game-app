@@ -1,20 +1,19 @@
 import EditProfile from "./EditProfile";
-import {Avatar, Box, Button, IconButton, Paper, Typography} from "@mui/material";
-import React, {useState, useEffect, useRef} from "react";
+import {Alert, Box, Button, IconButton, Paper, Snackbar, Typography} from "@mui/material";
+import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import CSS from "csstype";
 import fallbackAvatar from "../assets/fallback-avatar.png";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useUserContext } from "../contexts/UserContext";
+import {useUserContext} from "../contexts/UserContext";
 
 
 const ProfilePage = () => {
     const [editOpen, setEditOpen] = useState(false);
-    const [user, setUser] = useState<User>({ firstName: "", lastName: "", email: "" });
+    const [user, setUser] = useState<User>({firstName: "", lastName: "", email: ""});
 
-    const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const { avatarUrl, setAvatarUrl } = useUserContext();
+    const {avatarUrl, setAvatarUrl} = useUserContext();
 
     const [snackOpen, setSnackOpen] = useState(false);
     const [snackMessage, setSnackMessage] = useState("");
@@ -31,7 +30,7 @@ const ProfilePage = () => {
         const userId = localStorage.getItem("userId");
         const token = localStorage.getItem("token");
         const res = await axios.get(`http://localhost:4941/api/v1/users/${userId}`, {
-            headers: { "X-Authorization": token }
+            headers: {"X-Authorization": token}
         });
         setUser(res.data);
     };
@@ -44,15 +43,12 @@ const ProfilePage = () => {
             })
             .then((response) => {
                 const url = URL.createObjectURL(response.data);
-                setUserImageUrl(url);
-                setAvatarUrl(url); // 👈 Update global state
+                setAvatarUrl(url);
             })
             .catch((error) => {
                 if (error.response?.status === 404) {
-                    setUserImageUrl(null);
                     setAvatarUrl(null);
                 } else {
-                    setUserImageUrl(fallbackAvatar);
                     setAvatarUrl(fallbackAvatar);
                 }
             });
@@ -67,15 +63,40 @@ const ProfilePage = () => {
         margin: "20px",
     };
 
+
+    const handleSnackClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === "clickaway") return;
+        setSnackOpen(false);
+    };
+
     return (
-        <Paper elevation={3} style={card} sx={{ backgroundColor: "white", maxWidth: 600, margin: "40px auto" }}>
+        <Paper elevation={3} style={card} sx={{backgroundColor: "white", maxWidth: 600, margin: "40px auto"}}>
+            <Snackbar
+                open={snackOpen}
+                autoHideDuration={5000}
+                onClose={handleSnackClose}
+                anchorOrigin={{vertical: "top", horizontal: "right"}}
+                style={{zIndex: 9999}}
+            >
+                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{width: "100%"}}>
+                    {snackMessage}
+                </Alert>
+            </Snackbar>
             <Box display="flex" flexDirection="column" alignItems="center">
                 <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
                     <img
                         src={avatarUrl || fallbackAvatar}
                         alt="Profile"
-                        style={{ width: "200px", height: "200px", borderRadius: "10%", objectFit: "cover", marginBottom: "10px" }}
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        style={{
+                            width: "200px",
+                            height: "200px",
+                            borderRadius: "10%",
+                            objectFit: "cover",
+                            marginBottom: "10px"
+                        }}
+                        onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                        }}
                     />
 
                     <Box display="flex" gap={1} mb={1}>
@@ -87,16 +108,23 @@ const ProfilePage = () => {
                             const token = localStorage.getItem("token");
                             try {
                                 await axios.delete(`http://localhost:4941/api/v1/users/${userId}/image`, {
-                                    headers: { "X-Authorization": token }
+                                    headers: {"X-Authorization": token}
                                 });
-                                setUserImageUrl(fallbackAvatar);
                                 setAvatarUrl(fallbackAvatar);
                                 showSnackbar("Profile picture removed", "success");
-                            } catch {
-                                showSnackbar("Failed to remove profile picture", "error");
+                            } catch (error: any) {
+                                const backendMessage = error.response.statusText || "Failed to remove avatar";
+
+                                if (backendMessage.includes("Not Found")) {
+                                    showSnackbar("No user avatar found", "error");
+                                } else {
+                                    showSnackbar("Failed to remove avatar", "error");
+                                }
+
                             }
+
                         }}>
-                            <DeleteIcon />
+                            <DeleteIcon/>
                         </IconButton>
                     </Box>
 
@@ -104,7 +132,7 @@ const ProfilePage = () => {
                         ref={fileInputRef}
                         type="file"
                         accept="image/jpeg,image/png,image/gif"
-                        style={{ display: 'none' }}
+                        style={{display: 'none'}}
                         onChange={e => {
                             const file = e.target.files?.[0];
                             if (file) {
@@ -118,7 +146,6 @@ const ProfilePage = () => {
                                         }
                                     }).then(() => {
                                         const imageUrl = URL.createObjectURL(file);
-                                        setUserImageUrl(imageUrl);
                                         setAvatarUrl(imageUrl);
                                         showSnackbar("Profile picture updated!", "success");
                                     }).catch(() => {
@@ -130,7 +157,7 @@ const ProfilePage = () => {
                     />
                 </Box>
 
-                <Typography variant={"h5"} color="textPrimary" >
+                <Typography variant={"h5"} color="textPrimary">
                     Welcome, {user.firstName} {user.lastName}
                 </Typography>
 

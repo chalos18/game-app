@@ -1,5 +1,5 @@
 // src/contexts/UserContext.tsx
-import React, { createContext, useContext, useState } from "react";
+import React, {createContext, useContext, useState} from "react";
 
 type UserContextType = {
     avatarUrl: string | null;
@@ -8,11 +8,11 @@ type UserContextType = {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
     return (
-        <UserContext.Provider value={{ avatarUrl, setAvatarUrl }}>
+        <UserContext.Provider value={{avatarUrl, setAvatarUrl}}>
             {children}
         </UserContext.Provider>
     );

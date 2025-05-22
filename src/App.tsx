@@ -10,7 +10,7 @@ import Profile from "./pages/Profile";
 import Navbar from "./components/NavBar";
 import ScrollToTop from "./components/ScrollToTop";
 
-import { UserProvider } from "./contexts/UserContext";
+import {UserProvider} from "./contexts/UserContext";
 
 
 function App() {

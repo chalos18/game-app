@@ -227,7 +227,7 @@ const RegisterForm = () => {
                     }
                 }}
                 error={!!fieldErrors.email}
-                helperText={fieldErrors.email}
+                helperText={fieldErrors.email || `${email.length}/256 characters`}
             />
             <TextField
                 label="Password"

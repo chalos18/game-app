@@ -3,7 +3,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import {Alert, AppBar, Box, Button, IconButton, Menu, MenuItem, Snackbar, Toolbar, Typography} from '@mui/material';
 import axios from "axios";
 import fallbackAvatar from "../assets/fallback-avatar.png";
-import { useUserContext } from "../contexts/UserContext";
+import {useUserContext} from "../contexts/UserContext";
 
 function Navbar() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -16,7 +16,7 @@ function Navbar() {
 
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
 
-    const { avatarUrl } = useUserContext();
+    const {avatarUrl} = useUserContext();
 
     const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
         setSnackMessage(message);
@@ -118,7 +118,7 @@ function Navbar() {
                                 color="inherit"
                             >
                                 <img
-                                    src={avatarUrl  || fallbackAvatar}
+                                    src={avatarUrl || fallbackAvatar}
                                     alt="Creator"
                                     width={50}
                                     height={50}

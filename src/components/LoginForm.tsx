@@ -138,7 +138,7 @@ const LoginForm: React.FC = () => {
                             value={email}
                             onChange={(e) => {
                                 setEmail(e.target.value);
-                                setFieldErrors(prev => ({...prev, email: ''}));  // Clear error on change
+                                setFieldErrors(prev => ({...prev, email: ''}));
                             }}
                             error={!!fieldErrors.email}
                             helperText={fieldErrors.email}

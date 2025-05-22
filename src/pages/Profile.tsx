@@ -7,11 +7,10 @@ import GamesReviewedByMe from "../components/GamesReviewedByMe";
 import GamesOwnedByMe from "../components/GamesOwnedByMe";
 import CreateGame from "../components/CreateGame";
 import ViewProfile from '../components/ViewProfile';
-import EditProfile from "../components/EditProfile";
 
 const MyGames = () => {
     const [selectedSection, setSelectedSection] = React.useState(() => {
-        return localStorage.getItem("myGamesSelectedTab") || "createGames";
+        return localStorage.getItem("myGamesSelectedTab") || "viewProfile";
     });
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -33,8 +32,6 @@ const MyGames = () => {
                 return <GamesReviewedByMe/>;
             case "viewProfile":
                 return <ViewProfile/>;
-            // case "editProfile":
-            //     return <EditProfile/>;
             default:
                 return null;
 
@@ -54,7 +51,6 @@ const MyGames = () => {
                         scrollButtons="auto"
                     >
                         <Tab label="View Profile" value="viewProfile"/>
-                        {/*<Tab label="Edit Profile" value="editProfile"/>*/}
                         <Tab label="Create Game" value="createGames"/>
                         <Tab label="Library" value="owned"/>
                         <Tab label="Wishlist" value="wishlisted"/>
