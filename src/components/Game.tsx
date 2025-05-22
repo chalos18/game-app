@@ -295,7 +295,7 @@ const Game = () => {
                             </Typography>
 
                             <Typography variant="body2" color="textSecondary">
-                                {game.price === 0.00 ? "FREE" : "$" + (game.price/100).toFixed(2)}
+                                {game.price === 0.00 ? "FREE" : "$" + (game.price / 100).toFixed(2)}
                             </Typography>
 
                             <Typography variant="body2" color="textSecondary">

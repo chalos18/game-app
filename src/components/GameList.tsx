@@ -2,7 +2,7 @@ import axios from 'axios';
 import React from "react";
 import {
     Alert,
-    AlertTitle, Box,
+    Box,
     Button,
     ButtonGroup,
     Container,
@@ -13,7 +13,6 @@ import {
     Paper,
     Select,
     Snackbar,
-    TextField,
     Typography
 } from '@mui/material';
 import GameListObject from "./GameListObject";
@@ -35,7 +34,7 @@ const GameList = () => {
 
     const [selectedGenres, setSelectedGenres] = React.useState<number[]>([]);
     const [selectedPlatforms, setSelectedPlatforms] = React.useState<number[]>([]);
-    const [maxPrice, setMaxPrice] = React.useState<number>(10000);
+    const [maxPrice, setMaxPrice] = React.useState<number>(25000);
 
     const [genres, setGenres] = React.useState<{ genreId: number, name: string }[]>([]);
     const [platforms, setPlatforms] = React.useState<{ platformId: number, name: string }[]>([]);
@@ -125,30 +124,21 @@ const GameList = () => {
     };
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 4 }} >
+        <Container maxWidth="lg" sx={{mt: 4}}>
             <Snackbar
                 open={snackOpen}
                 autoHideDuration={5000}
                 onClose={handleSnackClose}
-                anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                style={{ zIndex: 9999 }}
+                anchorOrigin={{vertical: "top", horizontal: "right"}}
+                style={{zIndex: 9999}}
             >
-                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{ width: "100%" }}>
+                <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{width: "100%"}}>
                     {snackMessage}
                 </Alert>
             </Snackbar>
 
-            <Paper elevation={3} sx={{ p: 3, backgroundColor: "#DAE7E7" }}>
+            <Paper elevation={3} sx={{p: 3, backgroundColor: "#DAE7E7"}}>
                 <Box className="p-4 space-y-4">
-                    {/*<TextField*/}
-                    {/*    label="Search games"*/}
-                    {/*    fullWidth*/}
-                    {/*    value={searchTerm}*/}
-                    {/*    onChange={(e) => {*/}
-                    {/*        setSearchTerm(e.target.value);*/}
-                    {/*        setCurrentPage(1);*/}
-                    {/*    }}*/}
-                    {/*/>*/}
 
                     <GameFilters
                         searchTerm={searchTerm}
@@ -185,7 +175,7 @@ const GameList = () => {
                         ))}
                     </Grid>
 
-                    <Box style={{ marginTop: 24, textAlign: "center" }}>
+                    <Box style={{marginTop: 24, textAlign: "center"}}>
                         <Typography variant="body1">
                             Page {totalPages === 0 ? 0 : currentPage} of {totalPages}
                         </Typography>
@@ -198,7 +188,7 @@ const GameList = () => {
                         </ButtonGroup>
 
                         {totalPages === 0 && (
-                            <Typography sx={{ mt: 2 }} >No games available</Typography>
+                            <Typography sx={{mt: 2}}>No games available</Typography>
                         )}
                     </Box>
                 </Box>
