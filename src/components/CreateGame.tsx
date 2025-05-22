@@ -144,6 +144,7 @@ const CreateGame = () => {
         if (!newDescription.trim()) errors.description = "Description is required";
         if (newGenreId === "") errors.genreId = "Genre is required";
         if (newPrice === "") errors.price = "Price is required";
+        if (newPrice > 250) errors.price = "Max price is $250";
         if (newPlatformIds.length === 0) errors.platformIds = "One or more platforms required";
 
         if (Object.keys(errors).length > 0) {
@@ -218,7 +219,7 @@ const CreateGame = () => {
                 open={snackOpen}
                 autoHideDuration={5000}
                 onClose={handleSnackClose}
-                anchorOrigin={{vertical: "top", horizontal: "right"}}
+                anchorOrigin={{vertical: "top", horizontal: "center"}}
                 style={{zIndex: 9999}}
             >
                 <Alert onClose={handleSnackClose} severity={snackSeverity} sx={{width: "100%"}}>
@@ -286,10 +287,20 @@ const CreateGame = () => {
                     type="number"
                     required
                     value={newPrice}
-                    onChange={(e) => setNewPrice(e.target.value === "" ? "" : parseFloat(e.target.value))}
+                    onChange={(e) => {
+                        const value = e.target.value === "" ? "" : parseFloat(e.target.value);
+                        if (value === 250) {
+                            showSnackbar("$250 is the maximum allowed price", "warning");
+                        }
+                        setNewPrice(value);
+                    }}
                     error={!!fieldErrors.price}
                     helperText={fieldErrors.price}
-                    slotProps={{htmlInput: {step: 1}}}
+                    slotProps={{
+                        input: {
+                            inputProps: { min: 0, max: 250, step: 1 }
+                        }
+                    }}
                 />
 
                 <InputLabel id="platforms-select-label">Platforms *</InputLabel>
