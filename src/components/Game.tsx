@@ -2,7 +2,7 @@ import axios from "axios";
 import React from "react";
 import {Box, Button, Card, CardContent, CardMedia, Grid, Typography} from "@mui/material";
 import {HashLink} from 'react-router-hash-link';
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import CSS from "csstype";
 import fallbackAvatar from "../assets/fallback-avatar.png"
 import {useGameStore} from "../store";
@@ -11,7 +11,6 @@ import fallbackGameLogo from "../assets/fallback-game-logo.png";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ReviewForm from "./ReviewForm";
 import WishlistAndLibraryButtons from "./WishlistAndLibraryButtons";
-import { useLocation } from "react-router-dom";
 
 
 const Game = () => {

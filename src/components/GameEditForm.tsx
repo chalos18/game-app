@@ -1,7 +1,8 @@
 import {
     Alert,
     Button,
-    Checkbox, Container,
+    Checkbox,
+    Container,
     FormControl,
     FormControlLabel,
     FormGroup,
