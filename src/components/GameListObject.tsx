@@ -107,26 +107,6 @@ const GameListObject = (props: IGameProps) => {
     }, [game.gameId]);
 
 
-    const deleteGame = (gameId: number) => {
-        const token = localStorage.getItem("token");
-        axios.delete(`http://localhost:4941/api/v1/games/${gameId}`, {
-            headers: {
-                "X-Authorization": token,
-            },
-        })
-            .then(() => {
-                deleteGameFromStore(game);
-                showSnackbar("Game deleted successfully", "success");
-            })
-            .catch((error) => {
-                showSnackbar("Error deleting game: " + error.toString(), "error");
-            })
-            .finally(() => {
-                handleDeleteDialogClose();
-            });
-    };
-
-
     const getGameGenres = () => {
         axios
             .get(`http://localhost:4941/api/v1/games/genres`)
@@ -249,7 +229,6 @@ const GameListObject = (props: IGameProps) => {
             handleDeleteDialogClose();
         }
     };
-
 
 
     const gameCardStyles: CSS.Properties = {

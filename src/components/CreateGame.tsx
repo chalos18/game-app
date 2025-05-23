@@ -181,7 +181,7 @@ const CreateGame = () => {
                             },
                         })
                             .catch((uploadError) => {
-                                showSnackbar("Failed to upload profile picture. Please try again before registering.", "error");
+                                showSnackbar("Failed to upload profile picture. Please try again before uploading.", "error");
                             });
                     });
                 }

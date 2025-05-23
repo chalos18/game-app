@@ -1,7 +1,7 @@
 import {
     Alert,
     Button,
-    Checkbox,
+    Checkbox, Container,
     FormControl,
     FormControlLabel,
     FormGroup,
@@ -14,7 +14,8 @@ import {
     Stack,
     TextField
 } from "@mui/material";
-import {useState} from "react";
+import React, {useRef, useState} from "react";
+import axios from "axios";
 
 interface GameEditFormProps {
     game: Game;
@@ -40,6 +41,12 @@ const GameEditForm = ({game, genres, platforms, onUpdate, onCancel}: GameEditFor
     const [snackOpen, setSnackOpen] = useState(false);
     const [snackMessage, setSnackMessage] = useState("");
     const [snackSeverity, setSnackSeverity] = useState<"success" | "error" | "warning">("success");
+
+    const [gamePicture, setGamePicture] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
 
     const [fieldErrors, setFieldErrors] = useState({
         title: undefined,
@@ -93,6 +100,23 @@ const GameEditForm = ({game, genres, platforms, onUpdate, onCancel}: GameEditFor
             newGenreId: newGenreId,
             newPlatformIds: newPlatformIds
         });
+        const token = localStorage.getItem("token");
+        if (gamePicture) {
+            const formData = new FormData();
+            formData.append("image", gamePicture);
+
+            gamePicture.arrayBuffer().then((buffer) => {
+                axios.put(`http://localhost:4941/api/v1/games/${game.gameId}/image`, buffer, {
+                    headers: {
+                        "Content-Type": gamePicture.type,
+                        "X-Authorization": token,
+                    },
+                })
+                    .catch((uploadError) => {
+                        showSnackbar("Failed to upload profile picture. Please try again before uploading.", "error");
+                    });
+            });
+        }
 
         setTimeout(() => {
             setSnackOpen(false);
@@ -115,6 +139,7 @@ const GameEditForm = ({game, genres, platforms, onUpdate, onCancel}: GameEditFor
             </Snackbar>
 
             <Stack spacing={2}>
+
                 <TextField
                     label="Title"
                     value={newTitle}
@@ -203,7 +228,52 @@ const GameEditForm = ({game, genres, platforms, onUpdate, onCancel}: GameEditFor
                     )}
                 </FormControl>
 
-                <Stack direction="row" spacing={2}>
+                <Container>
+                    <input
+                        ref={fileInputRef}
+                        accept="image/jpeg,image/png,image/gif"
+                        type="file"
+                        id="game-picture"
+                        style={{display: 'none'}}
+                        onChange={(e) => {
+                            const file = e.target.files?.[0];
+
+                            if (fileInputRef.current) {
+                                fileInputRef.current.value = '';
+                            }
+
+                            if (file) {
+                                const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                                if (!validTypes.includes(file.type)) {
+                                    showSnackbar("Only JPEG, PNG, or GIF files are allowed.", "error");
+                                    return;
+                                }
+
+                                if (previewUrl) {
+                                    URL.revokeObjectURL(previewUrl);
+                                }
+
+                                setGamePicture(file);
+                                setPreviewUrl(URL.createObjectURL(file));
+                            }
+                        }}
+                    />
+                    <label htmlFor="game-picture">
+                        <Button variant="outlined" component="span" fullWidth>
+                            {gamePicture ? "Change Game Picture" : "Upload Game Picture (optional)"}
+                        </Button>
+                        {previewUrl && (
+                            <img
+                                src={previewUrl}
+                                alt="Game Picture Preview"
+                                style={{maxWidth: '100%', maxHeight: 200, borderRadius: 8, marginTop: 8}}
+                            />
+                        )}
+                    </label>
+                </Container>
+
+
+                <Stack direction="row" spacing={2} alignItems="center">
                     <Button type="submit" variant="contained" color="primary">
                         Save Changes
                     </Button>

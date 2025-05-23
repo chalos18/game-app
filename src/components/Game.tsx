@@ -46,9 +46,6 @@ const Game = () => {
     const [reviews, setReviews] = React.useState<Review[]>([]);
     const [reviewerImages, setReviewerImages] = React.useState<Record<number, string>>({});
 
-    // const game = useGameStore(state => state.game);
-    // const setGame = useGameStore(state => state.setGame);
-
     const [imageUrl, setImageUrl] = React.useState<string | null>(null);
     const [userImageUrl, setUserImageUrl] = React.useState<string | null>(null);
 
@@ -272,7 +269,6 @@ const Game = () => {
         padding: "0px",
     }
 
-
     return (
         <div>
             {errorFlag && <div style={{color: "red"}}>{errorMessage}</div>}
@@ -297,6 +293,7 @@ const Game = () => {
                             component="img"
                             sx={{
                                 width: 600,
+                                height: 600,
                                 objectFit: "cover",
                             }}
                             image={imageUrl || fallbackGameLogo}
