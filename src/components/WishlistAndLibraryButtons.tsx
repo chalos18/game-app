@@ -102,7 +102,7 @@ const WishlistAndLibraryButtons: React.FC<WishlistButtonProps> = ({gameId, creat
             headers: {"X-Authorization": token}
         })
             .then(res => {
-                const owned = res.data.some((g: any) => g.gameId === gameId);
+                const owned = res.data.games.some((g: any) => g.gameId === gameId);
                 setHasOwned(owned);
             })
             .catch(err => {

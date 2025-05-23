@@ -159,7 +159,7 @@ const CreateGame = () => {
                 title: newTitle,
                 description: newDescription,
                 genreId: Number(newGenreId),
-                price: Number(newPrice),
+                price: Math.round(Number(newPrice) * 100),
                 platformIds: newPlatformIds,
             }, {
                 headers: {
@@ -298,7 +298,7 @@ const CreateGame = () => {
                     helperText={fieldErrors.price}
                     slotProps={{
                         input: {
-                            inputProps: { min: 0, max: 250, step: 1 }
+                            inputProps: {min: 0, max: 250, step: 0.01}
                         }
                     }}
                 />

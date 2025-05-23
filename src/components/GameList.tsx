@@ -18,6 +18,7 @@ import {
 import GameListObject from "./GameListObject";
 import {useGameStore} from "../store";
 import GameFilters from "./GameFiltering";
+import {useLocation, useNavigate} from "react-router-dom";
 
 const GameList = () => {
     const games = useGameStore(state => state.games);
@@ -41,8 +42,9 @@ const GameList = () => {
 
     const [sortBy, setSortBy] = React.useState("CREATED_ASC");
 
-
     const totalPages = Math.ceil(totalGames / pageSize);
+
+    const navigate = useNavigate();
 
     const showSnackbar = (message: string, severity: "success" | "error" | "warning") => {
         setSnackMessage(message);
@@ -127,6 +129,33 @@ const GameList = () => {
         setCurrentPage(1);
     };
 
+
+    const location = useLocation();
+    React.useEffect(() => {
+        if (location.state?.fromList) {
+            const state = location.state.fromList;
+            setCurrentPage(state.currentPage);
+            setPageSize(state.pageSize);
+            setSearchTerm(state.searchTerm);
+            setSelectedGenres(state.selectedGenres);
+            setSelectedPlatforms(state.selectedPlatforms);
+            setMaxPrice(state.maxPrice);
+            setSortBy(state.sortBy);
+
+            setTimeout(() => {
+                window.scrollTo(0, state.scrollY);
+            }, 100);
+        }
+    }, []);
+
+    React.useEffect(() => {
+        if (location.state?.scrollY) {
+            setTimeout(() => {
+                window.scrollTo({ top: location.state.scrollY, behavior: "auto" });
+            }, 0);
+        }
+    }, []);
+
     return (
         <Container maxWidth="lg" sx={{mt: 4}}>
             <Snackbar
@@ -175,7 +204,21 @@ const GameList = () => {
 
                     <Grid container spacing={3} justifyContent="center">
                         {games.map((game: Game) => (
-                            <Grid key={game.gameId}>
+                            <Grid key={game.gameId} onClick={() => navigate(`/games/${game.gameId}`, {
+                                state: {
+                                    fromList: {
+                                        scrollY: window.scrollY,
+                                        currentPage,
+                                        pageSize,
+                                        searchTerm,
+                                        selectedGenres,
+                                        selectedPlatforms,
+                                        maxPrice,
+                                        sortBy
+                                    }
+                                }
+                            })
+                            }>
                                 <GameListObject game={game} />
                             </Grid>
                         ))}

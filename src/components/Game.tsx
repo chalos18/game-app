@@ -11,6 +11,7 @@ import fallbackGameLogo from "../assets/fallback-game-logo.png";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ReviewForm from "./ReviewForm";
 import WishlistAndLibraryButtons from "./WishlistAndLibraryButtons";
+import { useLocation } from "react-router-dom";
 
 
 const Game = () => {
@@ -68,6 +69,9 @@ const Game = () => {
     const setGames = useGameStore(state => state.setGames);
 
     const [ownedGames, setOwnedGames] = React.useState<Game[]>([]);
+
+    const location = useLocation();
+
 
     React.useEffect(() => {
         const getOwnedGames = () => {
@@ -273,15 +277,22 @@ const Game = () => {
         <div>
             {errorFlag && <div style={{color: "red"}}>{errorMessage}</div>}
             <Box sx={{display: 'flex', flexDirection: 'column'}}>
+                <Box sx={{ mb: 2 }}>
+                    <Button
+                        variant="contained"
+                        color="inherit"
+                        onClick={() => {
+                            const scrollY = location.state?.scrollY || 0;
+                            navigate("/home", { state: { scrollY } });
+                        }}
+                        startIcon={<ArrowBackIcon />}
+                    >
+                    Back to Games
+                    </Button>
+                </Box>
+
                 <Card sx={{...gameCardStyles}}>
                     <Box sx={{display: 'flex', flexDirection: 'row'}}>
-                        <Button
-                            variant="contained"
-                            color="inherit"
-                            onClick={() => navigate(-1)}
-                        >
-                            <ArrowBackIcon/>
-                        </Button>
                         <CardMedia
                             component="img"
                             sx={{
